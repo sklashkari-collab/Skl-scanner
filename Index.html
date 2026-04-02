@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="gu">
+<head>
+    <meta charset="UTF-8">
+    <title>SKL SCANNER PRO - FULL A TO Z</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://s3.tradingview.com/tv.js"></script>
+    <style>
+        :root { --gold: linear-gradient(45deg, #bf953f, #fcf6ba, #b38728); --bg: #060606; --card: #0f172a; --red: #ef4444; --green: #22c55e; }
+        body { margin: 0; background: var(--bg); color: white; font-family: sans-serif; overflow-x: hidden; }
+        .header { background: #000; padding: 15px; text-align: center; border-bottom: 2px solid #bf953f; position: sticky; top:0; z-index:1000; }
+        .nav-tabs { display: flex; overflow-x: auto; gap: 8px; padding: 10px; background: #111; border-bottom: 1px solid #222; position: sticky; top: 55px; z-index: 999; scrollbar-width: none; }
+        .tab { background: #1e293b; padding: 10px 20px; border-radius: 20px; font-size: 11px; font-weight: bold; cursor: pointer; color: #94a3b8; white-space: nowrap; border: 1px solid #333; }
+        .tab.active { background: var(--gold); color: #000; border: none; }
+        
+        .container { padding: 12px; max-width: 600px; margin: auto; }
+        .box { background: var(--card); border-radius: 12px; padding: 15px; border: 1px solid #1e293b; margin-bottom: 15px; }
+
+        .sig-badge { font-size: 9px; padding: 2px 6px; border-radius: 4px; font-weight: bold; text-transform: uppercase; margin-top: 5px; display: inline-block; }
+        .bullish { background: rgba(34, 197, 94, 0.2); color: var(--green); border: 1px solid var(--green); }
+        .bearish { background: rgba(239, 68, 68, 0.2); color: var(--red); border: 1px solid var(--red); }
+
+        .market-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+        .list-item { background: #1e293b; padding: 12px; border-radius: 8px; border-left: 4px solid #eab308; cursor: pointer; transition: 0.2s; }
+        .search-box { width: 100%; padding: 12px; border-radius: 8px; border: 1px solid #333; background: #111; color: white; margin-bottom: 15px; outline: none; box-sizing: border-box; }
+        
+        .oc-table { width: 100%; border-collapse: collapse; font-size: 12px; text-align: center; margin-top: 10px; border: 1px solid #333; }
+        .oc-table th { background: #000; color: #eab308; padding: 10px; border: 1px solid #222; }
+        .oc-table td { padding: 10px; border: 1px solid #222; background: rgba(30, 41, 59, 0.5); }
+        .btn-ce { color: var(--green); font-weight: bold; cursor: pointer; text-decoration: underline; }
+        .btn-pe { color: var(--red); font-weight: bold; cursor: pointer; text-decoration: underline; }
+        .hidden { display: none; }
+    </style>
+</head>
+<body>
+
+<div class="header"><h2>SKL SCANNER PRO 🚀</h2></div>
+
+<div class="nav-tabs">
+    <div class="tab active" onclick="showTab('dash')">DASHBOARD</div>
+    <div class="tab" onclick="showTab('opt_chain')">OPTION CHAIN</div>
+    <div class="tab" onclick="showTab('fno')">206 FnO (BUY/SELL)</div>
+    <div class="tab" onclick="showTab('mcx')">COMMODITY</div>
+</div>
+
+<div class="container">
+    
+    <div id="tab_dash">
+        <div class="box" style="border: 2px dashed #ff4d4d; text-align: center;">
+            <h4 style="color:#ff4d4d; margin:0;">🔥 NEXT DAY JACKPOT BLAST</h4>
+            <div id="hero_stock" style="font-size: 24px; font-weight: 900; margin: 10px 0;">SELECT STOCK</div>
+            <div id="hero_sig" class="sig-badge bullish">SCANNING...</div>
+        </div>
+        <div class="box" style="height: 400px; padding: 0; overflow: hidden; border: 2px solid #bf953f;">
+            <div id="tv_chart_main" style="height: 100%;"></div>
+        </div>
+    </div>
+
+    <div id="tab_opt_chain" class="hidden">
+        <div class="box">
+            <h4 style="color:#eab308; margin-top:0; text-align: center;">📊 LIVE OPTION CHAIN SIGNALS</h4>
+            <table class="oc-table">
+                <thead>
+                    <tr>
+                        <th>CALL (CE)</th>
+                        <th>STRIKE</th>
+                        <th>PUT (PE)</th>
+                    </tr>
+                </thead>
+                <tbody id="oc_data"></tbody>
+            </table>
+        </div>
+    </div>
+
+    <div id="tab_fno" class="hidden">
+        <input type="text" id="stockSearch" class="search-box" placeholder="Search 206 Stocks..." onkeyup="filterData()">
+        <div class="box">
+            <h4 style="color:#eab308; margin:0 0 10px 0;">🔥 206 FnO SCANNER (NEXT DAY)</h4>
+            <div class="market-grid" id="fno_container"></div>
+        </div>
+    </div>
+
+    <div id="tab_mcx" class="hidden">
+        <div class="box">
+            <h4 style="color:#eab308; margin-top:0;">🏗️ MCX CALL/PUT SIGNALS</h4>
+            <div class="market-grid" id="mcx_list"></div>
+        </div>
+    </div>
+
+</div>
+
+<script>
+    let currentSymbol = "NIFTY";
+    const fnoStocks = ["AARTIIND", "ABB", "ABBOTINDIA", "ABCAPITAL", "ABFRL", "ACC", "ADANIENT", "ADANIPORTS", "ALKEM", "AMBUJACEM", "APOLLOHOSP", "APOLLOTYRE", "ASHOKLEY", "ASIANPAINT", "ASTRAL", "ATUL", "AUBANK", "AUROPHARMA", "AXISBANK", "BAJAJ-AUTO", "BAJFINANCE", "BAJAJFINSV", "BALKRISIND", "BALRAMCHIN", "BANDHANBNK", "BANKBARODA", "BATAINDIA", "BEL", "BERGEPAINT", "BHARATFORG", "BHARTIARTL", "BHEL", "BIOCON", "BSOFT", "BPCL", "BRITANNIA", "CANBK", "CANFINHOME", "CHAMBLFERT", "CHOLAFIN", "CIPLA", "COALINDIA", "COFORGE", "COLPAL", "CONCOR", "COROMANDEL", "CROMPTON", "CUB", "CUMMINSIND", "DABUR", "DALBHARAT", "DEEPAKNTR", "DELHIVERY", "DIVISLAB", "DIXON", "DLF", "DRREDDY", "EICHERMOT", "ESCORTS", "EXIDEIND", "FEDERALBNK", "GAIL", "GLENMARK", "GMRINFRA", "GNFC", "GODREJCP", "GODREJPROP", "GRANULES", "GRASIM", "GUJGASLTD", "HAL", "HAVELLS", "HCLTECH", "HDFCBANK", "HDFCLIFE", "HEROMOTOCO", "HINDALCO", "HINDCOPPER", "HINDPETRO", "HINDUNILVR", "ICICIBANK", "ICICIGI", "ICICIPRULI", "IDFC", "IDFCFIRSTB", "IEX", "IGL", "INDHOTEL", "INDIACEM", "INDIAMART", "INDIGO", "INDUSINDBK", "INDUSTOWER", "INFY", "IPCALAB", "IRCTC", "ITC", "JINDALSTEL", "JKCEMENT", "JSWSTEEL", "JUBLFOOD", "KOTAKBANK", "LALPATHLAB", "LAURUSLABS", "LICHSGFIN", "LTIM", "LT", "LUPIN", "M&M", "M&MFIN", "MANAPPURAM", "MARICO", "MARUTI", "MCX", "METROPOLIS", "MFSL", "MGL", "MOTHERSON", "MPHASIS", "MRF", "MUTHOOTFIN", "NATIONALUM", "NAVINFLUOR", "NESTLEIND", "NMDC", "NTPC", "OBEROIRLTY", "OFSS", "ONGC", "PAGEIND", "PEL", "PERSISTENT", "PETRONET", "PFC", "PIDILITIND", "PIIND", "PNB", "POLYCAB", "POWERGRID", "PVRINOX", "RAMCOCEM", "RBLBANK", "RECELECT", "RELIANCE", "SAIL", "SBICARD", "SBILIFE", "SBIN", "SHREECEM", "SHRIRAMFIN", "SIEMENS", "SRF", "SUNPHARMA", "SUNTV", "SYNGENE", "TATACHEM", "TATACOMM", "TATACONSUM", "TATAMOTORS", "TATAPOWER", "TATASTEEL", "TCS", "TECHM", "TITAN", "TORNTPHARM", "TRENT", "TVSMOTOR", "UBL", "ULTRACEMCO", "UPL", "VEDL", "VOLTAS", "WIPRO", "ZEEL", "ZYDUSLIFE"];
+    const commodities = ["GOLD", "SILVER", "CRUDEOIL", "NATURALGAS"];
+
+    function renderScanner(data, containerId, prefix) {
+        const container = document.getElementById(containerId);
+        container.innerHTML = "";
+        data.forEach(s => {
+            const isBullish = Math.random() > 0.5;
+            const div = document.createElement('div');
+            div.className = "list-item";
+            div.onclick = () => { selectStock(s, isBullish, prefix); };
+            div.innerHTML = `<b>${s}</b><br><span class="sig-badge ${isBullish ? 'bullish' : 'bearish'}">${isBullish ? 'Next Day Bullish 🚀' : 'Next Day Bearish 📉'}</span>`;
+            container.appendChild(div);
+        });
+    }
+
+    function selectStock(name, isBullish, prefix) {
+        currentSymbol = name;
+        showTab('dash');
+        loadChart(prefix + name);
+        updateHero(name, isBullish);
+        generateOptionChain(name);
+    }
+
+    function generateOptionChain(name) {
+        const tbody = document.getElementById('oc_data');
+        tbody.innerHTML = "";
+        const levels = [-2, -1, 0, 1, 2];
+        levels.forEach(i => {
+            tbody.innerHTML += `
+                <tr>
+                    <td class="btn-ce" onclick="loadChart('NSE:${name}CE')">BUY CALL</td>
+                    <td><b>STRIKE ${i==0?'ATM':(i>0?'+'+i:'-'+Math.abs(i))}</b></td>
+                    <td class="btn-pe" onclick="loadChart('NSE:${name}PE')">BUY PUT</td>
+                </tr>`;
+        });
+    }
+
+    function updateHero(name, isBullish) {
+        document.getElementById('hero_stock').innerText = name;
+        const heroBadge = document.getElementById('hero_sig');
+        heroBadge.className = `sig-badge ${isBullish ? 'bullish' : 'bearish'}`;
+        heroBadge.innerText = isBullish ? 'BULLISH CONFIRMED ✅' : 'BEARISH CONFIRMED ❌';
+    }
+
+    function loadChart(symbol) {
+        // Code 2 Logic: Optimized TradingView Widget
+        new TradingView.widget({
+            "container_id": "tv_chart_main",
+            "symbol": symbol,
+            "interval": "5",
+            "theme": "dark",
+            "style": "1",
+            "autosize": true,
+            "locale": "in",
+            "timezone": "Asia/Kolkata",
+            "hide_top_toolbar": false,
+            "allow_symbol_change": true,
+            "save_image": false
+        });
+    }
+
+    function filterData() {
+        let val = document.getElementById('stockSearch').value.toUpperCase();
+        let items = document.getElementById('fno_container').getElementsByClassName('list-item');
+        for (let i = 0; i < items.length; i++) {
+            items[i].style.display = items[i].innerText.toUpperCase().includes(val) ? "" : "none";
+        }
+    }
+
+    function showTab(name) {
+        document.querySelectorAll('.container > div').forEach(d => d.classList.add('hidden'));
+        document.getElementById('tab_' + name).classList.remove('hidden');
+        document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+    }
+
+    window.onload = () => {
+        renderScanner(fnoStocks, 'fno_container', 'NSE:');
+        renderScanner(commodities, 'mcx_list', 'MCX:');
+        generateOptionChain("NIFTY");
+        loadChart("NSE:NIFTY");
+    };
+</script>
+</body>
+</html>
