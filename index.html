@@ -121,31 +121,24 @@
     }
 
     function loadChart(symbol) {
-    let finalSymbol = symbol.includes(":") ? symbol : "NSE:" + symbol;
+    // Symbol ko clean karke NSE: lagana
+    let cleanSymbol = symbol.replace("NSE:", "").replace("MCX:", "");
+    let finalSymbol = symbol.includes("MCX:") ? "MCX:" + cleanSymbol : "NSE:" + cleanSymbol;
     
-    // Purane chart ko saaf karne ke liye
-    document.getElementById('tv_chart_main').innerHTML = "";
-
-    // Naya Advanced Widget Script
-    const script = document.createElement('script');
-    script.src = 'https://s3.tradingview.com/external-embedding/embed-widget-advanced-chart.js';
-    script.type = 'text/javascript';
-    script.async = true;
-    script.innerHTML = JSON.stringify({
-        "autosize": true,
-        "symbol": finalSymbol,
-        "interval": "5",
-        "timezone": "Asia/Kolkata",
-        "theme": "dark",
-        "style": "1",
-        "locale": "in",
-        "enable_publishing": false,
-        "allow_symbol_change": true,
-        "calendar": false,
-        "support_host": "https://www.tradingview.com"
-    });
-    document.getElementById('tv_chart_main').appendChild(script);
+    // Iframe method jo har browser mein chalta hai
+    const chartDiv = document.getElementById('tv_chart_main');
+    chartDiv.innerHTML = `
+        <iframe 
+            src="https://s.tradingview.com/widgetembed/?frameElementId=tradingview_7621a&symbol=${finalSymbol}&interval=5&hidesidetoolbar=1&hidetoptoolbar=0&symboledit=1&saveimage=1&toolbarbg=f1f3f6&studies=[]&theme=dark&style=1&timezone=Asia%2FKolkata&studies_overrides={}&overrides={}&enabled_features=[]&disabled_features=[]&locale=in&utm_source=localhost&utm_medium=widget&utm_campaign=chart&utm_term=${finalSymbol}"
+            width="100%" 
+            height="100%" 
+            frameborder="0" 
+            allowtransparency="true" 
+            scrolling="no" 
+            allowfullscreen>
+        </iframe>`;
 }
+
 
     function filterData() {
         let val = document.getElementById('stockSearch').value.toUpperCase();
