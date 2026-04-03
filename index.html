@@ -3,148 +3,124 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>SKL VIP TERMINAL PRO - FULL LIST</title>
+    <title>SKL TERMINAL PRO V2000</title>
+    <script type="text/javascript" src="https://s3.tradingview.com/tv.js"></script>
     <style>
-        :root { 
-            --gold: linear-gradient(135deg, #bf953f, #fcf6ba, #b38728);
-            --dark: #000; --card: #121212; --text-gold: #d4af37;
-        }
-        body { margin: 0; background: var(--dark); color: white; font-family: 'Segoe UI', sans-serif; overflow-x: hidden; padding-bottom: 80px; }
+        :root { --bg: #0a0e14; --card: #151a21; --gold: #d4af37; --bull: #00ffcc; --bear: #ff4d4d; --dim: #8a949d; }
+        body { margin: 0; background: var(--bg); color: white; font-family: 'Inter', sans-serif; overflow-x: hidden; padding-bottom: 75px; }
         
-        .header { padding: 15px; background: #000; border-bottom: 1px solid #d4af3733; text-align: center; position: sticky; top: 0; z-index: 100; }
-        .logo { font-size: 20px; font-weight: 900; background: var(--gold); -webkit-background-clip: text; -webkit-text-fill-color: transparent; letter-spacing: 1px; }
+        /* HEADER & SEARCH */
+        .header-box { padding: 15px; background: #0d121a; border-bottom: 1px solid #1e252e; position: sticky; top: 0; z-index: 100; }
+        .search-bar { width: 92%; background: #1a1f26; border: 1px solid #333; padding: 12px; border-radius: 8px; color: white; margin-bottom: 10px; outline: none; font-size: 14px; }
+        
+        .market-tabs { display: flex; gap: 15px; padding: 5px 15px 10px; overflow-x: auto; scrollbar-width: none; border-bottom: 1px solid #1e252e; }
+        .tab-btn { color: var(--dim); font-weight: bold; font-size: 13px; cursor: pointer; white-space: nowrap; padding-bottom: 5px; }
+        .tab-btn.active { color: white; border-bottom: 2px solid var(--gold); }
 
-        /* MARKET NAV - FIXED TOP */
-        .market-nav { display: flex; overflow-x: auto; gap: 10px; padding: 12px; background: #080808; border-bottom: 1px solid #222; scrollbar-width: none; }
-        .m-btn { background: #1a1a1a; color: #888; border: 1px solid #333; padding: 8px 18px; border-radius: 20px; font-size: 12px; font-weight: bold; white-space: nowrap; cursor: pointer; transition: 0.3s; }
-        .m-btn.active { background: var(--gold); color: black; border: none; transform: scale(1.05); }
+        /* TRIAL STRIP */
+        .trial-strip { background: #1a1500; color: var(--gold); text-align: center; padding: 6px; font-size: 11px; border-bottom: 1px solid #332200; font-weight: bold; }
 
-        /* CONTENT WRAPPER */
-        .content-area { padding: 10px; }
-        .page { display: none; }
-        .page.active { display: block; animation: fadeIn 0.4s; }
+        /* PAGES */
+        .page { display: none; padding: 12px; animation: fadeIn 0.3s; }
+        .page.active { display: block; }
         @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
 
-        /* VIP WATCHLIST CARD */
-        .vip-list-card { background: var(--card); border-radius: 15px; border: 1px solid #d4af3722; overflow: hidden; margin-bottom: 20px; }
-        .list-header { background: #1a1a1a; padding: 10px 15px; font-size: 11px; color: var(--text-gold); display: flex; justify-content: space-between; font-weight: bold; border-bottom: 1px solid #222; }
-        
-        .stock-item { display: flex; justify-content: space-between; align-items: center; padding: 14px 15px; border-bottom: 1px solid #222; transition: 0.2s; }
-        .stock-item:active { background: #1a1a1a; }
-        .name-box { display: flex; flex-direction: column; }
-        .s-name { font-weight: bold; font-size: 15px; color: #fff; }
-        .s-exch { font-size: 10px; color: #666; }
-        .price-box { text-align: right; }
-        .s-price { font-weight: bold; font-size: 15px; display: block; }
-        .s-change { font-size: 11px; font-weight: bold; }
-        .up { color: #00ff00; } .down { color: #ff3e3e; }
+        /* KOTAK STYLE WIDGETS */
+        .widget-card { background: var(--card); border-radius: 12px; padding: 15px; margin-bottom: 15px; border: 1px solid #232a33; }
+        .row { display: flex; justify-content: space-between; margin: 12px 0; align-items: center; border-bottom: 1px solid #1e252e; padding-bottom: 8px; }
+        .row:last-child { border: none; }
 
-        /* VIP BADGE */
-        .vip-badge { font-size: 9px; background: var(--gold); color: black; padding: 2px 6px; border-radius: 4px; font-weight: 900; margin-left: 5px; vertical-align: middle; }
+        /* OPTION CHAIN TABLE */
+        .oc-table { width: 100%; border-collapse: collapse; font-size: 11px; text-align: center; }
+        .oc-table th { color: var(--dim); padding: 10px; border-bottom: 1px solid #1e252e; }
+        .oc-table td { padding: 15px 5px; border-bottom: 1px solid #161c24; }
+        .strike { background: #000; font-weight: bold; color: var(--gold); font-size: 13px; border: 1px solid #232a33 !important; }
 
         /* BOTTOM NAV */
-        .bottom-nav { position: fixed; bottom: 0; width: 100%; background: #000; display: flex; justify-content: space-around; padding: 12px 0; border-top: 1px solid #d4af3733; box-shadow: 0 -5px 15px rgba(0,0,0,0.5); }
-        .nav-item { text-align: center; font-size: 10px; color: #555; cursor: pointer; }
-        .nav-item.active { color: var(--text-gold); }
-        .nav-icon { font-size: 18px; margin-bottom: 3px; display: block; }
+        .bottom-nav { position: fixed; bottom: 0; width: 100%; background: #0d121a; display: flex; justify-content: space-around; padding: 12px 0; border-top: 1px solid #1e252e; z-index: 1000; }
+        .nav-item { text-align: center; color: var(--dim); font-size: 10px; cursor: pointer; }
+        .nav-item.active { color: var(--gold); }
     </style>
 </head>
 <body>
 
-<div class="header"><div class="logo">SKL VIP TERMINAL PRO</div></div>
+<div class="trial-strip">⏳ YOUR VIP TRIAL PERIOD: <span id="timer">02d 23h 59m 44s</span></div>
 
-<div class="market-nav">
-    <div class="m-btn active" onclick="switchPage('index-page', this)">INDEX HUB</div>
-    <div class="m-btn" onclick="switchPage('equity-page', this)">EQUITY STOCKS</div>
-    <div class="m-btn" onclick="switchPage('fno-page', this)">F&O TERMINAL</div>
-    <div class="m-btn" onclick="switchPage('commodity-page', this)">COMMODITY</div>
+<div class="header-box">
+    <div style="color:var(--gold); font-weight:900; font-size:18px; margin-bottom:12px; text-align:center;">SKL TERMINAL PRO</div>
+    <input type="text" class="search-bar" placeholder="🔍 Dixon, Nifty, Crude Oil...">
+    <div class="market-tabs">
+        <div class="tab-btn active">Equity</div>
+        <div class="tab-btn">Derivatives (FnO)</div>
+        <div class="tab-btn">Commodity</div>
+    </div>
 </div>
 
-<div class="content-area">
-    <div id="index-page" class="page active">
-        <div class="vip-list-card">
-            <div class="list-header"><span>SYMBOL</span> <span>LTP & CHANGE</span></div>
-            <div class="stock-item">
-                <div class="name-box"><span class="s-name">NIFTY 50 <span class="vip-badge">LIVE</span></span><span class="s-exch">NSE INDEX</span></div>
-                <div class="price-box"><span class="s-price">22,512.40</span><span class="s-change up">+0.45%</span></div>
-            </div>
-            <div class="stock-item">
-                <div class="name-box"><span class="s-name">BANK NIFTY</span><span class="s-exch">NSE INDEX</span></div>
-                <div class="price-box"><span class="s-price">48,210.15</span><span class="s-change up">+1.12%</span></div>
-            </div>
-            <div class="stock-item">
-                <div class="name-box"><span class="s-name">FIN NIFTY</span><span class="s-exch">NSE INDEX</span></div>
-                <div class="price-box"><span class="s-price">21,430.60</span><span class="s-change down">-0.15%</span></div>
-            </div>
+<div class="content">
+    <div id="home-page" class="page active">
+        <div class="widget-card" style="height: 220px; padding: 0; overflow: hidden; position: relative;">
+            <div id="main-chart" style="height: 100%;"></div>
+        </div>
+
+        <div style="color:var(--gold); font-size:11px; margin: 10px 5px; font-weight: bold;">🏆 VIP LIVE SIGNALS</div>
+        <div class="widget-card">
+            <div class="row"><span>NIFTY 50</span><span style="color:var(--bull); font-weight:bold;">STRONG BUY</span></div>
+            <div class="row"><span>DIXON</span><span style="color:var(--bull); font-weight:bold;">BTST BULLISH</span></div>
+            <div class="row"><span>CRUDE OIL</span><span style="color:var(--bull); font-weight:bold;">VIP SIGNAL</span></div>
         </div>
     </div>
 
-    <div id="equity-page" class="page">
-        <div class="vip-list-card">
-            <div class="list-header"><span>EQUITY WATCHLIST</span> <span>VIP SIGNAL</span></div>
-            <div class="stock-item">
-                <div class="name-box"><span class="s-name">RELIANCE</span><span class="s-exch">EQUITY</span></div>
-                <div class="price-box"><span class="s-price">2,945.00</span><span class="s-change up">STRONG BUY</span></div>
-            </div>
-            <div class="stock-item">
-                <div class="name-box"><span class="s-name">TCS</span><span class="s-exch">EQUITY</span></div>
-                <div class="price-box"><span class="s-price">4,012.20</span><span class="s-change down">NEUTRAL</span></div>
-            </div>
-            <div class="stock-item">
-                <div class="name-box"><span class="s-name">HDFC BANK</span><span class="s-exch">EQUITY</span></div>
-                <div class="price-box"><span class="s-price">1,530.45</span><span class="s-change up">BTST BULLISH</span></div>
-            </div>
-            <div class="stock-item">
-                <div class="name-box"><span class="s-name">ICICI BANK</span><span class="s-exch">EQUITY</span></div>
-                <div class="price-box"><span class="s-price">1,085.00</span><span class="s-change up">BREAKOUT</span></div>
-            </div>
-            <div class="stock-item">
-                <div class="name-box"><span class="s-name">ADANI ENT</span><span class="s-exch">EQUITY</span></div>
-                <div class="price-box"><span class="s-price">3,240.80</span><span class="s-change up">VIP PICK</span></div>
-            </div>
-        </div>
-    </div>
-
-    <div id="fno-page" class="page">
-        <div class="vip-list-card">
-            <div class="list-header"><span>F&O ACTIVE STOCKS</span> <span>OI STATUS</span></div>
-            <div class="stock-item">
-                <div class="name-box"><span class="s-name">DIXON <span class="vip-badge">HOT</span></span><span class="s-exch">DERIVATIVES</span></div>
-                <div class="price-box"><span class="s-price">11,245.00</span><span class="s-change up">LONG BUILDUP</span></div>
-            </div>
-            <div class="stock-item">
-                <div class="name-box"><span class="s-name">BAJAJ FINANCE</span><span class="s-exch">DERIVATIVES</span></div>
-                <div class="price-box"><span class="s-price">7,120.00</span><span class="s-change down">SHORT COVERING</span></div>
-            </div>
-            <div class="stock-item">
-                <div class="name-box"><span class="s-name">AARTI IND</span><span class="s-exch">DERIVATIVES</span></div>
-                <div class="price-box"><span class="s-price">745.30</span><span class="s-change up">STRONG BUY</span></div>
-            </div>
+    <div id="options-page" class="page">
+        <div style="color:var(--gold); font-size:12px; font-weight:bold; margin-bottom:10px;">⛓️ ADVANCED OPTION CHAIN (NIFTY)</div>
+        <div class="widget-card" style="padding:0;">
+            <table class="oc-table">
+                <tr><th>CALL (AI)</th><th>STRIKE</th><th>PUT (AI)</th></tr>
+                <tr><td><span style="color:var(--bull);">BUY @ 145</span></td><td class="strike">22400</td><td><span style="color:var(--bear);">EXIT</span></td></tr>
+                <tr><td><span style="color:var(--bull);">STR. BUY</span></td><td class="strike">22450</td><td><span style="color:var(--bear);">SELL @ 58</span></td></tr>
+                <tr><td><span style="color:var(--bear);">WAIT</span></td><td class="strike">22500</td><td><span style="color:var(--bull);">BULLISH</span></td></tr>
+            </table>
         </div>
     </div>
 </div>
 
 <div class="bottom-nav">
-    <div class="nav-item active" onclick="switchNav('home')"><span class="nav-icon">🏠</span>HOME</div>
-    <div class="nav-item" onclick="switchNav('chart')"><span class="nav-icon">📈</span>VIP CHART</div>
-    <div class="nav-item" onclick="switchNav('options')"><span class="nav-icon">⛓️</span>OPTIONS</div>
-    <div class="nav-item" onclick="switchNav('account')"><span class="nav-icon">👤</span>ACCOUNT</div>
+    <div class="nav-item active" onclick="showPage('home-page', this)"><span>🏠</span><br>HOME</div>
+    <div class="nav-item" onclick="showPage('options-page', this)"><span>⛓️</span><br>OPTIONS</div>
+    <div class="nav-item" onclick="alert('VIP Charts Loading...')"><span>📈</span><br>CHARTS</div>
+    <div class="nav-item"><span>👤</span><br>ACCOUNT</div>
 </div>
 
 <script>
-    function switchPage(pageId, btn) {
+    function showPage(pageId, el) {
         document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-        document.querySelectorAll('.m-btn').forEach(b => b.classList.remove('active'));
+        document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
         document.getElementById(pageId).classList.add('active');
-        btn.classList.add('active');
+        el.classList.add('active');
     }
 
-    function switchNav(type) {
-        document.querySelectorAll('.nav-item').forEach(i => i.classList.remove('active'));
-        event.currentTarget.classList.add('active');
-        if(type === 'chart') alert("VIP CHART Integration: Opening TradingView Gold...");
-    }
+    // LIVE CHART
+    new TradingView.widget({
+        "container_id": "main-chart",
+        "autosize": true,
+        "symbol": "NSE:NIFTY",
+        "interval": "5",
+        "theme": "dark",
+        "style": "1",
+        "locale": "en",
+        "hide_top_toolbar": true,
+        "backgroundColor": "#151a21"
+    });
+
+    // TIMER
+    let time = 259200; 
+    setInterval(() => {
+        time--;
+        let d = Math.floor(time / 86400);
+        let h = Math.floor((time % 86400) / 3600);
+        let m = Math.floor((time % 3600) / 60);
+        let s = time % 60;
+        document.getElementById('timer').innerText = `${d}d ${h}h ${m}m ${s}s`;
+    }, 1000);
 </script>
-
 </body>
 </html>
