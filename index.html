@@ -1,46 +1,104 @@
 <!DOCTYPE html>
-<html>
+<html lang="hi">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SKL SCANNER V5 PRO</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>SKL ULTIMATE TERMINAL</title>
     <style>
-        body { margin: 0; background: #000; color: #bf953f; font-family: sans-serif; text-align: center; }
-        .header { padding: 15px; border-bottom: 2px solid #bf953f; font-size: 18px; font-weight: bold; background: #0a0a0a; }
-        #chart-container { width: 100%; height: 450px; background: #111; }
-        .btn-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px; padding: 12px; background: #050505; }
-        button { background: #1e293b; color: white; border: 1px solid #bf953f; padding: 12px 5px; border-radius: 6px; font-size: 11px; font-weight: bold; }
-        button:active { background: #bf953f; color: #000; }
-        .analysis-box { width: 100%; height: 220px; border-top: 1px solid #333; margin-top: 5px; }
+        body { margin: 0; background: #000; color: #bf953f; font-family: 'Segoe UI', sans-serif; overflow-x: hidden; }
+        .header { background: #0a0a0a; padding: 10px; border-bottom: 2px solid #bf953f; font-weight: bold; font-size: 20px; display: flex; justify-content: space-between; align-items: center; }
+        .live-status { font-size: 10px; color: #00ff00; border: 1px solid #00ff00; padding: 2px 5px; border-radius: 4px; animation: blink 1s infinite; }
+        @keyframes blink { 50% { opacity: 0; } }
+        
+        #main-chart { width: 100%; height: 450px; background: #111; }
+        
+        .section-title { background: #1a1a1a; padding: 8px; font-size: 14px; border-bottom: 1px solid #333; color: #fff; text-align: left; }
+        .widget-row { width: 100%; height: 250px; display: flex; overflow-x: auto; background: #050505; }
+        .widget-box { min-width: 100%; height: 100%; border-right: 1px solid #222; }
+
+        .nav-tabs { display: grid; grid-template-columns: repeat(4, 1fr); gap: 2px; background: #222; padding: 2px; }
+        .nav-tabs button { background: #111; color: #fff; border: none; padding: 10px 5px; font-size: 11px; font-weight: bold; cursor: pointer; }
+        .nav-tabs button.active { background: #bf953f; color: #000; }
+
+        .btn-container { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; padding: 15px; background: #0a0a0a; }
+        button.stock-btn { background: #1e293b; color: white; border: 1px solid #334155; padding: 12px 5px; border-radius: 6px; font-size: 11px; font-weight: bold; transition: 0.3s; }
+        button.stock-btn:active { background: #bf953f; color: #000; transform: scale(0.95); }
+        
         iframe { width: 100%; height: 100%; border: none; }
     </style>
 </head>
 <body>
 
-<div class="header">SKL SCANNER V5 PRO 🚀</div>
-
-<div id="chart-container">
-    <iframe id="tv-chart" src="https://s.tradingview.com/widgetembed/?symbol=NIFTY&interval=5&theme=dark&style=1&locale=in"></iframe>
+<div class="header">
+    SKL TERMINAL PRO 🚀
+    <span class="live-status">LIVE MARKET</span>
 </div>
 
-<div class="analysis-box">
-    <iframe id="tv-analysis" src="https://s.tradingview.com/embed-widget/technical-analysis/?symbol=NSE:NIFTY&interval=1m&theme=dark&locale=in"></iframe>
+<div id="main-chart">
+    <iframe id="tv-main" src="https://s.tradingview.com/widgetembed/?symbol=NIFTY&interval=5&theme=dark&style=1&locale=in&withdateranges=true&hide_side_toolbar=false&allow_symbol_change=true&details=true&hotlist=true"></iframe>
 </div>
 
-<div class="btn-grid">
-    <button onclick="update('NIFTY')">NIFTY 50</button>
-    <button onclick="update('BANKNIFTY')">BANK NIFTY</button>
-    <button onclick="update('RELIANCE')">RELIANCE</button>
-    <button onclick="update('SBIN')">SBI BANK</button>
-    <button onclick="update('TATAMOTORS')">TATA MOTORS</button>
-    <button onclick="update('AARTIIND')">AARTI IND</button>
+<div class="nav-tabs">
+    <button id="tab1" class="active" onclick="showTools('analysis')">ANALYSIS</button>
+    <button id="tab2" onclick="showTools('fundamental')">INFO</button>
+    <button id="tab3" onclick="showTools('commodity')">COMMODITY</button>
+    <button id="tab4" onclick="showTools('options')">F&O DATA</button>
+</div>
+
+<div id="widget-display" style="height: 250px;">
+    <iframe id="tv-extra" src="https://s.tradingview.com/embed-widget/technical-analysis/?symbol=NSE:NIFTY&interval=1m&theme=dark&locale=in"></iframe>
+</div>
+
+<div class="section-title">QUICK SWITCH (NSE / F&O)</div>
+<div class="btn-container">
+    <button class="stock-btn" onclick="allUpdate('NIFTY')">NIFTY 50</button>
+    <button class="stock-btn" onclick="allUpdate('BANKNIFTY')">BANK NIFTY</button>
+    <button class="stock-btn" onclick="allUpdate('FINNIFTY')">FIN NIFTY</button>
+    <button class="stock-btn" onclick="allUpdate('RELIANCE')">RELIANCE</button>
+    <button class="stock-btn" onclick="allUpdate('SBIN')">SBIN (Bank)</button>
+    <button class="stock-btn" onclick="allUpdate('HDFCBANK')">HDFC BANK</button>
+    <button class="stock-btn" onclick="allUpdate('CRUDEOIL')">CRUDE OIL</button>
+    <button class="stock-btn" onclick="allUpdate('GOLD')">GOLD</button>
+    <button class="stock-btn" onclick="allUpdate('AARTIIND')">AARTI IND</button>
 </div>
 
 <script>
-    function update(s) {
-        // Fix: TradingView widget ke liye direct symbol use kar rahe hain
-        document.getElementById('tv-chart').src = "https://s.tradingview.com/widgetembed/?symbol=" + s + "&interval=5&theme=dark&locale=in";
-        document.getElementById('tv-analysis').src = "https://s.tradingview.com/embed-widget/technical-analysis/?symbol=NSE:" + s + "&interval=1m&theme=dark&locale=in";
+    let currentSymbol = "NIFTY";
+
+    function allUpdate(s) {
+        currentSymbol = s;
+        let mainSym = s;
+        let nseSym = "NSE:" + s;
+        
+        // Update Main Chart
+        document.getElementById('tv-main').src = "https://s.tradingview.com/widgetembed/?symbol=" + mainSym + "&interval=5&theme=dark&style=1&locale=in";
+        
+        // Update Secondary Widget
+        document.getElementById('tv-extra').src = "https://s.tradingview.com/embed-widget/technical-analysis/?symbol=" + nseSym + "&interval=1m&theme=dark&locale=in";
+    }
+
+    function showTools(type) {
+        // Tab styling logic
+        const tabs = document.querySelectorAll('.nav-tabs button');
+        tabs.forEach(t => t.classList.remove('active'));
+        
+        let nseSym = "NSE:" + currentSymbol;
+        let widget = document.getElementById('tv-extra');
+
+        if(type === 'analysis') {
+            document.getElementById('tab1').classList.add('active');
+            widget.src = "https://s.tradingview.com/embed-widget/technical-analysis/?symbol=" + nseSym + "&interval=1m&theme=dark&locale=in";
+        } else if(type === 'fundamental') {
+            document.getElementById('tab2').classList.add('active');
+            widget.src = "https://s.tradingview.com/embed-widget/symbol-info/?symbol=" + nseSym + "&theme=dark&locale=in";
+        } else if(type === 'commodity') {
+            document.getElementById('tab3').classList.add('active');
+            widget.src = "https://s.tradingview.com/widgetembed/?symbol=MCX:CRUDEOIL1!&interval=5&theme=dark";
+        } else if(type === 'options') {
+            document.getElementById('tab4').classList.add('active');
+            // Advanced Hotlist for F&O
+            widget.src = "https://s.tradingview.com/embed-widget/hotlists/?theme=dark&locale=in";
+        }
     }
 </script>
 
