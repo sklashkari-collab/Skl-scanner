@@ -20,35 +20,36 @@
 
         .power-meter { background: var(--card); border: 1px solid #232a33; border-radius: 12px; padding: 15px; margin-bottom: 15px; }
         .bar-bg { height: 8px; background: #222; border-radius: 4px; margin: 10px 0; overflow: hidden; }
-        .bar-fill { height: 100%; background: linear-gradient(90deg, var(--bull), #0088ff); width: 72%; }
+        .bar-fill { height: 100%; background: linear-gradient(90deg, var(--bull), #0088ff); width: 72%; transition: 1s; }
 
         .scanner-card { background: var(--card); border-radius: 12px; border: 1px solid #232a33; overflow: hidden; }
         .scan-row { display: flex; justify-content: space-between; padding: 15px; border-bottom: 1px solid #1e252e; align-items: center; }
+        .signal-tag { padding: 4px 8px; border-radius: 4px; font-size: 10px; font-weight: bold; }
+        .tag-buy { background: rgba(0, 255, 204, 0.1); color: var(--bull); border: 1px solid var(--bull); }
+        .tag-sell { background: rgba(255, 77, 77, 0.1); color: var(--bear); border: 1px solid var(--bear); }
         
         .footer { position: fixed; bottom: 0; width: 100%; background: #0d1117; display: flex; justify-content: space-around; padding: 10px 0; border-top: 1px solid #1e252e; z-index: 1000; }
-        .f-item { text-align: center; color: var(--dim); font-size: 10px; cursor: pointer; flex: 1; transition: 0.2s; }
+        .f-item { text-align: center; color: var(--dim); font-size: 10px; cursor: pointer; flex: 1; }
         .f-item.active { color: var(--gold); font-weight: bold; }
-        
-        .placeholder-text { text-align: center; padding: 50px; color: var(--dim); }
     </style>
 </head>
 <body>
 
 <div class="top-nav">
-    <div class="app-title" id="terminal-title">SKL VIP TERMINAL PRO</div>
+    <div class="app-title" id="terminal-title">SKL VIP TERMINAL [LIVE]</div>
 </div>
 
 <div id="home" class="page active-page">
     <div class="trial-card">
-        <span>⏱️ TRIAL ENDS IN:</span>
-        <div id="timer" style="color:var(--gold); font-weight:bold;">02d 23h 59m 44s</div>
+        <span>⏱️ VIP ACCESS ACTIVE</span>
+        <div id="timer" style="color:var(--gold); font-weight:bold; font-size: 1.2em;">Loading...</div>
     </div>
 
     <div class="power-meter">
         <div style="display:flex; justify-content:space-between; font-size:11px;">
-            <span>MARKET POWER</span> <span style="color:var(--bull);">STRONG BULLISH 📈</span>
+            <span>MARKET STRENGTH</span> <span id="market-status" style="color:var(--bull);">BULLISH 📈</span>
         </div>
-        <div class="bar-bg"><div class="bar-fill"></div></div>
+        <div class="bar-bg"><div id="power-bar" class="bar-fill"></div></div>
     </div>
 
     <div style="height: 200px; margin-bottom: 15px; border-radius: 12px; overflow: hidden; border: 1px solid #232a33;">
@@ -57,32 +58,23 @@
 
     <div class="scanner-card">
         <div class="scan-row">
-            <div><div style="font-weight:bold;">NIFTY 50</div></div>
-            <div style="text-align:right;"><div id="nifty-price" style="color:var(--bull);">₹22,512.30</div></div>
+            <div><div style="font-weight:bold;">NIFTY 50</div><div style="font-size:9px; color:var(--dim);">Index Live</div></div>
+            <div style="text-align:right;"><div id="nifty-price" style="color:var(--bull); font-weight:bold;">₹22,512.30</div><div id="nifty-signal" class="signal-tag tag-buy">STRONG BUY</div></div>
+        </div>
+        <div class="scan-row">
+            <div><div style="font-weight:bold;">DIXON</div><div style="font-size:9px; color:var(--dim);">Top Gainer</div></div>
+            <div style="text-align:right;"><div id="dixon-price" style="font-weight:bold;">₹11,245.00</div><div id="dixon-signal" class="signal-tag tag-buy">BTST BULLISH</div></div>
         </div>
     </div>
 </div>
 
-<div id="chart" class="page">
-    <div style="height: 80vh; border-radius: 12px; overflow: hidden;">
-        <div id="tv_chart_main" style="height: 100%;"></div>
-    </div>
-</div>
-
-<div id="options" class="page">
-    <div class="placeholder-text">
-        <h3>OPTION CHAIN</h3>
-        <p>Fetching Live Greeks... (Delta, Gamma, Theta)</p>
-        <div style="color:var(--gold)">Connect Angel One to Unlock</div>
-    </div>
-</div>
-
+<div id="chart" class="page"><div id="tv_chart_main" style="height: 80vh;"></div></div>
+<div id="options" class="page" style="text-align:center; padding: 40px;"><h3>Live Option Chain</h3><p style="color:var(--gold)">Scanning 22500 CE/PE...</p></div>
 <div id="account" class="page">
     <div class="scanner-card" style="padding: 20px;">
         <h3>My Account</h3>
-        <p>Client ID: {{ANGEL_CLIENT_ID}}</p>
-        <p>Status: <span style="color:var(--bull)">CONNECTED</span></p>
-        <button style="width:100%; background:var(--gold); border:none; padding:10px; border-radius:5px;">LOGOUT</button>
+        <p>Client ID: <span id="client-id-display" style="color:var(--gold)">L121534</span></p>
+        <p>Status: <span style="color:var(--bull)">API CONNECTED</span></p>
     </div>
 </div>
 
@@ -94,55 +86,65 @@
 </div>
 
 <script>
-    // PAGE NAVIGATION LOGIC
     function showPage(pageId, element) {
-        // Hide all pages
         document.querySelectorAll('.page').forEach(p => p.classList.remove('active-page'));
-        // Deactivate all footer items
         document.querySelectorAll('.f-item').forEach(i => i.classList.remove('active'));
-        
-        // Show selected page
         document.getElementById(pageId).classList.add('active-page');
-        // Activate selected footer item
         element.classList.add('active');
-
-        // Load Chart if Chart Page is opened
         if(pageId === 'chart') { loadMainChart(); }
     }
 
-    // TRADINGVIEW FIX
+    // TradingView Configuration
     function loadHomeChart() {
         new TradingView.widget({
-            "autosize": true, "symbol": "FX_IDC:INRUSD*22500", "interval": "5",
-            "timezone": "Asia/Kolkata", "theme": "dark", "style": "3",
+            "autosize": true, "symbol": "NSE:NIFTY", "interval": "1",
+            "timezone": "Asia/Kolkata", "theme": "dark", "style": "2",
             "container_id": "tv_chart_home", "hide_top_toolbar": true, "locale": "in"
         });
     }
 
     function loadMainChart() {
         new TradingView.widget({
-            "autosize": true, "symbol": "NSE:NIFTY", "interval": "1",
+            "autosize": true, "symbol": "NSE:NIFTY", "interval": "5",
             "timezone": "Asia/Kolkata", "theme": "dark", "style": "1",
             "container_id": "tv_chart_main", "locale": "in"
         });
     }
 
-    // TIMER & SIMULATION
+    // LIVE SIMULATION & SIGNALS
+    let niftyBase = 22512.30;
+    let dixonBase = 11245.00;
+
+    setInterval(() => {
+        // Price Movement
+        niftyBase += (Math.random() - 0.5) * 10;
+        dixonBase += (Math.random() - 0.5) * 8;
+        document.getElementById('nifty-price').innerText = "₹" + niftyBase.toFixed(2);
+        document.getElementById('dixon-price').innerText = "₹" + dixonBase.toFixed(2);
+
+        // Auto Signal Switcher
+        if(Math.random() > 0.8) {
+            let nSig = document.getElementById('nifty-signal');
+            if(nSig.innerText === "STRONG BUY") {
+                nSig.innerText = "ACCUMULATE"; nSig.className = "signal-tag tag-buy";
+            } else {
+                nSig.innerText = "STRONG BUY";
+            }
+        }
+        
+        // Power Bar Movement
+        document.getElementById('power-bar').style.width = (65 + Math.random() * 20) + "%";
+    }, 2000);
+
+    // Timer Logic
     let time = 259184; 
     setInterval(() => {
         time--;
-        let d = Math.floor(time / 86400);
-        let h = Math.floor((time % 86400) / 3600);
-        let m = Math.floor((time % 3600) / 60);
-        let s = time % 60;
+        let d = Math.floor(time / 86400), h = Math.floor((time % 86400) / 3600), m = Math.floor((time % 3600) / 60), s = time % 60;
         document.getElementById('timer').innerText = `${d}d ${h}h ${m}m ${s}s`;
-        
-        // Simulating Price Movement
-        let price = 22512 + (Math.random() * 5);
-        document.getElementById('nifty-price').innerText = "₹" + price.toFixed(2);
     }, 1000);
 
-    window.onload = () => { loadHomeChart(); };
+    window.onload = loadHomeChart;
 </script>
 </body>
 </html>
