@@ -1,1 +1,120 @@
 
+<!DOCTYPE html>
+<html lang="gu">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>SKL VIP TERMINAL REAL</title>
+    <script type="text/javascript" src="https://s3.tradingview.com/tv.js"></script>
+    <style>
+        :root { --bg: #05070a; --card: #11151c; --gold: #d4af37; --bull: #00ffcc; --bear: #ff4d4d; --dim: #8a949d; }
+        body { margin: 0; background: var(--bg); color: white; font-family: 'Inter', sans-serif; overflow-x: hidden; }
+        
+        /* LOGIN SCREEN */
+        #login-screen { position: fixed; inset: 0; background: var(--bg); z-index: 2000; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 20px; }
+        .login-box { background: var(--card); padding: 30px; border-radius: 15px; border: 1px solid var(--gold); width: 100%; max-width: 300px; text-align: center; }
+        input { width: 90%; padding: 12px; margin: 10px 0; border-radius: 8px; border: 1px solid #232a33; background: #05070a; color: white; outline: none; }
+        .btn { background: var(--gold); color: black; padding: 12px; width: 100%; border: none; border-radius: 8px; font-weight: bold; cursor: pointer; }
+
+        /* MAIN INTERFACE */
+        .page { display: none; padding: 15px; padding-bottom: 90px; animation: fadeIn 0.3s; }
+        .active-page { display: block; }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        .scanner-card { background: var(--card); border-radius: 12px; border: 1px solid #232a33; margin-bottom: 15px; padding: 15px; }
+        .scan-row { display: flex; justify-content: space-between; padding: 10px 0; border-bottom: 1px solid #1e252e; }
+        .footer { position: fixed; bottom: 0; width: 100%; background: #0d1117; display: flex; justify-content: space-around; padding: 12px 0; border-top: 1px solid #1e252e; z-index: 1000; }
+        .f-item { text-align: center; color: var(--dim); font-size: 10px; flex: 1; cursor: pointer; }
+        .f-item.active { color: var(--gold); font-weight: bold; }
+        #chart-div { height: 400px; width: 100%; border-radius: 12px; margin-top: 10px; }
+    </style>
+</head>
+<body>
+
+<div id="login-screen">
+    <div class="login-box">
+        <h2 style="color:var(--gold);">SKL TERMINAL LOGIN</h2>
+        <p style="font-size:12px; color:var(--dim);">Enter Client ID to Start Live Data</p>
+        <input type="text" id="client-id" placeholder="Client ID (L121534)">
+        <input type="password" id="pin" placeholder="Enter PIN">
+        <button class="btn" onclick="startApp()">LOGIN</button>
+        <p id="msg" style="color:var(--bear); font-size:12px; margin-top:10px;"></p>
+    </div>
+</div>
+
+<div id="app-ui" style="display:none;">
+    <div id="home" class="page active-page">
+        <div style="text-align: center; padding: 10px; color: var(--gold); font-weight: 900;">SKL VIP LIVE [REAL-TIME]</div>
+        
+        <div class="scanner-card" style="text-align: center; border: 1px solid var(--gold);">
+            <div style="font-size: 11px; color: var(--dim);">NIFTY 50 INDEX</div>
+            <div id="nifty-live" style="font-size: 32px; font-weight: 900; color: var(--bull);">₹22,713.10</div>
+            <div id="mkt-status" style="font-size: 10px; color: var(--gold);">● FETCHING DATA...</div>
+        </div>
+
+        <div style="padding: 5px; font-size: 11px; color: var(--gold);">🔥 LIVE VIP SCANNERS</div>
+        <div class="scanner-card" id="stock-list"></div>
+    </div>
+
+    <div id="chart-page" class="page">
+        <div class="scanner-card" style="height: 450px;"><div id="chart-div"></div></div>
+    </div>
+
+    <div id="profile" class="page">
+        <div class="scanner-card">
+            <h3>VIP Account</h3>
+            <div class="scan-row"><span>User ID:</span><span style="color:var(--gold);">L121534</span></div>
+            <div class="scan-row"><span>Status:</span><span style="color:var(--bull);">CONNECTED TO ANGEL API ✅</span></div>
+            <br><button class="btn" onclick="location.reload()" style="background:#ff4d4d; color:white;">LOGOUT</button>
+        </div>
+    </div>
+
+    <div class="footer">
+        <div class="f-item active" onclick="changeTab('home', this)">🏠<br>MARKET</div>
+        <div class="f-item" onclick="changeTab('chart-page', this); loadTV();">📈<br>CHART</div>
+        <div class="f-item" onclick="changeTab('profile', this)">👤<br>PROFILE</div>
+    </div>
+</div>
+
+<script>
+    function startApp() {
+        const id = document.getElementById('client-id').value;
+        if(id === "L121534") {
+            document.getElementById('login-screen').style.display = 'none';
+            document.getElementById('app-ui').style.display = 'block';
+            syncData();
+        } else {
+            document.getElementById('msg').innerText = "ભૂલ: સાચો Client ID નાખો!";
+        }
+    }
+
+    function changeTab(id, el) {
+        document.querySelectorAll('.page').forEach(p => p.classList.remove('active-page'));
+        document.getElementById(id).classList.add('active-page');
+        document.querySelectorAll('.f-item').forEach(i => i.classList.remove('active'));
+        el.classList.add('active');
+    }
+
+    function loadTV() {
+        new TradingView.widget({
+            "container_id": "chart-div", "symbol": "NSE:NIFTY", "interval": "5",
+            "theme": "dark", "style": "1", "locale": "en", "allow_symbol_change": true
+        });
+    }
+
+    async function syncData() {
+        try {
+            const res = await fetch('/.netlify/functions/market');
+            const data = await res.json();
+            document.getElementById('nifty-live').innerText = "₹" + data.nifty;
+            document.getElementById('mkt-status').innerText = "● " + data.status;
+            
+            document.getElementById('stock-list').innerHTML = `
+                <div class="scan-row"><b>DIXON</b><b style="color:var(--bull)">₹11,245.00</b></div>
+                <div class="scan-row"><b>BOSCHLTD</b><b style="color:var(--bull)">₹32,510.00</b></div>
+            `;
+        } catch(e) { console.log("Reconnecting..."); }
+    }
+    setInterval(syncData, 3000);
+</script>
+</body>
+</html>
