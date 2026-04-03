@@ -3,141 +3,152 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>SKL PRO TERMINAL</title>
+    <title>SKL MASTER TERMINAL</title>
     <script src="https://s3.tradingview.com/tv.js"></script>
     <style>
-        :root { --primary: #0052fe; --bg: #000; --card: #111; --green: #00c805; --red: #ff3b30; --gold: #bf953f; }
-        body { margin: 0; background: var(--bg); color: white; font-family: 'Inter', sans-serif; height: 100vh; display: flex; flex-direction: column; }
+        :root { --primary: #0052fe; --bg: #000; --card: #121212; --green: #00ff88; --red: #ff4d4d; --gold: #bf953f; }
+        body { margin: 0; background: var(--bg); color: white; font-family: 'Inter', sans-serif; height: 100vh; display: flex; flex-direction: column; overflow: hidden; }
         
-        /* Top Navigation */
-        .header { padding: 15px; background: #000; border-bottom: 1px solid #222; display: flex; justify-content: space-between; align-items: center; }
+        /* Header */
+        .header { padding: 15px; background: #080808; border-bottom: 1px solid #222; display: flex; justify-content: space-between; align-items: center; }
         .logo { color: var(--gold); font-weight: bold; font-size: 18px; }
 
-        /* Multi-Page Views */
-        .page { display: none; flex: 1; flex-direction: column; overflow-y: auto; padding-bottom: 70px; }
+        /* Page Navigation */
+        .page { display: none; flex: 1; flex-direction: column; overflow-y: auto; padding-bottom: 80px; }
         .page.active { display: flex; }
 
-        /* Chart Area */
-        .chart-box { height: 400px; width: 100%; background: #000; border-bottom: 2px solid #222; }
+        /* Professional Grid (Angel One Style) */
+        .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; padding: 15px; }
+        .stock-card { background: var(--card); border: 1px solid #222; border-radius: 12px; padding: 15px; cursor: pointer; position: relative; }
+        .stock-card:active { border-color: var(--primary); transform: scale(0.98); }
+        .sig-badge { font-size: 10px; font-weight: bold; color: var(--green); margin-top: 5px; display: block; }
 
-        /* Grid Lists */
-        .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; padding: 15px; }
-        .card { background: var(--card); padding: 15px; border-radius: 8px; border: 1px solid #222; cursor: pointer; }
-        .card:active { border-color: var(--primary); }
-        .sig { font-size: 10px; font-weight: bold; margin-top: 5px; }
+        /* Chart Section */
+        .chart-container { flex: 1; min-height: 380px; background: #000; }
+        .bottom-details { height: 220px; background: #0a0a0a; border-top: 2px solid #222; padding: 15px; }
 
-        /* Bottom Nav Bar (Like Angel One) */
-        .bottom-nav { position: fixed; bottom: 0; width: 100%; background: #080808; border-top: 1px solid #222; display: flex; height: 65px; z-index: 1000; }
-        .nav-item { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; font-size: 10px; color: #666; cursor: pointer; }
-        .nav-item.active { color: var(--primary); }
-        .nav-icon { font-size: 20px; margin-bottom: 4px; }
+        /* Bottom Nav (Upstox Style) */
+        .bottom-nav { position: fixed; bottom: 0; width: 100%; background: #080808; border-top: 1px solid #222; display: flex; height: 70px; z-index: 1000; }
+        .nav-item { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; font-size: 11px; color: #555; cursor: pointer; }
+        .nav-item.active { color: var(--primary); font-weight: bold; }
+        .nav-icon { font-size: 22px; margin-bottom: 4px; }
 
-        /* Buttons */
-        .buy-sell-bar { padding: 10px; display: flex; gap: 10px; background: #000; }
-        .btn { flex: 1; padding: 12px; border-radius: 6px; font-weight: bold; border: none; cursor: pointer; }
+        .search-bar { width: 90%; margin: 10px auto; padding: 12px; background: #111; border: 1px solid #333; color: white; border-radius: 8px; display: block; outline: none; }
     </style>
 </head>
 <body>
 
 <div class="header">
     <div class="logo">SKL TERMINAL PRO</div>
-    <div style="font-size: 10px; color: var(--green);">● LIVE MARKET</div>
+    <div style="font-size: 10px; color: var(--green);">● LIVE DATA</div>
 </div>
 
-<div id="p-chart" class="page active">
-    <div class="chart-box" id="main-tv-chart"></div>
-    <div style="padding: 15px;">
-        <h4 id="active-title" style="margin:0;">NIFTY 50</h4>
-        <div id="ai-status" style="color: var(--gold); font-size: 12px; margin-top: 5px;">AI ANALYZING...</div>
-        <div style="height: 150px; margin-top: 10px;">
-            <iframe id="signal-meter" style="width:100%; height:100%; border:none;"></iframe>
-        </div>
-    </div>
-    <div class="buy-sell-bar">
-        <button class="btn" style="background: var(--green); color: #000;">BUY CALL</button>
-        <button class="btn" style="background: var(--red); color: #fff;">BUY PUT</button>
+<div id="p-terminal" class="page active">
+    <div class="chart-container" id="main_chart_area"></div>
+    <div class="bottom-details">
+        <h3 id="display-name" style="margin:0; color:var(--gold);">NIFTY 50</h3>
+        <p style="font-size:12px; color:#666; margin:5px 0;">AI SIGNAL METER (1m & 5m)</p>
+        <iframe id="signal-meter" style="width:100%; height:130px; border:none;"></iframe>
     </div>
 </div>
 
 <div id="p-fno" class="page">
-    <div style="padding: 15px;"><input type="text" placeholder="Search FnO Stocks..." style="width:100%; padding:10px; background:#111; border:1px solid #333; color:white; border-radius:5px;"></div>
-    <div class="grid" id="fno-list"></div>
+    <input type="text" class="search-bar" placeholder="Search FnO Stocks..." onkeyup="filterStocks(this.value, 'fno-grid')">
+    <div class="grid" id="fno-grid"></div>
 </div>
 
 <div id="p-equity" class="page">
-    <div class="grid" id="equity-list"></div>
+    <input type="text" class="search-bar" placeholder="Search Equity..." onkeyup="filterStocks(this.value, 'equity-grid')">
+    <div class="grid" id="equity-grid"></div>
 </div>
 
 <div id="p-mcx" class="page">
-    <div class="grid" id="mcx-list"></div>
+    <div class="grid" id="mcx-grid"></div>
 </div>
 
 <div class="bottom-nav">
-    <div class="nav-item active" onclick="showPage('p-chart', this)">
-        <span class="nav-icon">📊</span><span>CHART</span>
+    <div class="nav-item active" onclick="switchPage('p-terminal', this)">
+        <span class="nav-icon">📊</span>CHART
     </div>
-    <div class="nav-item" onclick="showPage('p-fno', this)">
-        <span class="nav-icon">🔥</span><span>F&O</span>
+    <div class="nav-item" onclick="switchPage('p-fno', this)">
+        <span class="nav-icon">🔥</span>F&O
     </div>
-    <div class="nav-item" onclick="showPage('p-equity', this)">
-        <span class="nav-icon">📈</span><span>CASH</span>
+    <div class="nav-item" onclick="switchPage('p-equity', this)">
+        <span class="nav-icon">💰</span>CASH
     </div>
-    <div class="nav-item" onclick="showPage('p-mcx', this)">
-        <span class="nav-icon">🛠️</span><span>MCX</span>
+    <div class="nav-item" onclick="switchPage('p-mcx', this)">
+        <span class="nav-icon">⛏️</span>MCX
     </div>
 </div>
 
 <script>
-    const fno = ["NIFTY", "BANKNIFTY", "RELIANCE", "SBIN", "HDFCBANK", "ICICIBANK", "INFY", "TCS", "TATAMOTORS", "ADANIPORTS"];
-    const equity = ["ZOMATO", "JIOFIN", "IRFC", "SUZLON", "PUNJABBNK", "TATASTEEL", "NHPC", "YESBANK"];
+    // Stock Data
+    const fno = ["NIFTY", "BANKNIFTY", "RELIANCE", "SBIN", "HDFCBANK", "ICICIBANK", "INFY", "TCS", "TATAMOTORS", "ADANIPORTS", "ITC", "JSWSTEEL", "AARTIIND", "ABFRL", "ACC"];
+    const cash = ["ZOMATO", "SUZLON", "YESBANK", "IRFC", "RVNL", "JIOFIN", "TATASTEEL", "NHPC", "IDEA", "IFCI"];
     const mcx = ["CRUDEOIL", "SILVER", "GOLD", "NATURALGAS"];
 
-    let currentSym = "NSE:NIFTY";
-
-    function showPage(pageId, el) {
+    function switchPage(pageId, element) {
         document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
         document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
         document.getElementById(pageId).classList.add('active');
-        el.classList.add('active');
+        element.classList.add('active');
     }
 
-    function renderGrids() {
-        setupGrid('fno-list', fno, 'NSE:');
-        setupGrid('equity-list', equity, 'NSE:');
-        setupGrid('mcx-list', mcx, 'TVC:'); // TVC used to avoid "Only on TradingView" error
+    function loadGrids() {
+        renderGrid('fno-grid', fno, 'NSE:');
+        renderGrid('equity-grid', cash, 'NSE:');
+        renderGrid('mcx-grid', mcx, 'MCX:');
     }
 
-    function setupGrid(id, list, prefix) {
-        const container = document.getElementById(id);
+    function renderGrid(containerId, list, prefix) {
+        const container = document.getElementById(containerId);
         list.forEach(s => {
             const card = document.createElement('div');
-            card.className = 'card';
-            card.onclick = () => { loadChart(prefix + s, s); showPage('p-chart', document.querySelector('.nav-item')); };
-            card.innerHTML = `<b>${s}</b><div class="sig" style="color:var(--green)">STRONG BUY 🚀</div>`;
+            card.className = 'stock-card';
+            // Symbol fix logic: Use TVC for commodities to avoid error
+            let finalSym = (prefix === 'MCX:') ? 'TVC:' + s : prefix + s;
+            
+            card.onclick = () => { 
+                updateTerminal(finalSym, s); 
+                switchPage('p-terminal', document.querySelector('.nav-item')); 
+            };
+            card.innerHTML = `<b>${s}</b><span class="sig-badge">STRONG BUY 🚀</span>`;
             container.appendChild(card);
         });
     }
 
-    function loadChart(sym, name) {
-        currentSym = sym;
-        document.getElementById('active-title').innerText = name;
+    function updateTerminal(sym, name) {
+        document.getElementById('display-name').innerText = name;
         
+        // Professional Widget Fix
         new TradingView.widget({
             "autosize": true,
             "symbol": sym,
             "interval": "5",
+            "timezone": "Asia/Kolkata",
             "theme": "dark",
             "style": "1",
             "locale": "in",
-            "container_id": "main-tv-chart"
+            "toolbar_bg": "#f1f3f6",
+            "enable_publishing": false,
+            "hide_side_toolbar": false,
+            "allow_symbol_change": true,
+            "container_id": "main_chart_area"
         });
 
         document.getElementById('signal-meter').src = `https://s.tradingview.com/embed-widget/technical-analysis/?symbol=${sym}&interval=1m&theme=dark&locale=in`;
     }
 
+    function filterStocks(query, gridId) {
+        const cards = document.querySelectorAll(`#${gridId} .stock-card`);
+        cards.forEach(c => {
+            c.style.display = c.innerText.toUpperCase().includes(query.toUpperCase()) ? "block" : "none";
+        });
+    }
+
     window.onload = () => {
-        renderGrids();
-        loadChart("NSE:NIFTY", "NIFTY 50");
+        loadGrids();
+        updateTerminal("NSE:NIFTY", "NIFTY 50");
     };
 </script>
 </body>
