@@ -2,139 +2,28 @@
 <html lang="gu">
 <head>
     <meta charset="UTF-8">
-    <title>SKL SCANNER PRO - V3 FINAL</title>
+    <title>SKL SCANNER V4 - 100% WORKING</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <style>
-        :root { --gold: linear-gradient(45deg, #bf953f, #fcf6ba, #b38728); --bg: #060606; --card: #0f172a; --red: #ef4444; --green: #22c55e; }
-        body { margin: 0; background: var(--bg); color: white; font-family: sans-serif; overflow-x: hidden; }
-        .header { background: #000; padding: 15px; text-align: center; border-bottom: 2px solid #bf953f; position: sticky; top:0; z-index:1000; }
-        .nav-tabs { display: flex; overflow-x: auto; gap: 8px; padding: 10px; background: #111; border-bottom: 1px solid #222; position: sticky; top: 55px; z-index: 999; scrollbar-width: none; }
-        .tab { background: #1e293b; padding: 10px 20px; border-radius: 20px; font-size: 11px; font-weight: bold; cursor: pointer; color: #94a3b8; white-space: nowrap; border: 1px solid #333; }
-        .tab.active { background: var(--gold); color: #000; border: none; }
-        .container { padding: 12px; max-width: 600px; margin: auto; }
-        .box { background: var(--card); border-radius: 12px; padding: 15px; border: 1px solid #1e293b; margin-bottom: 15px; }
-        .sig-badge { font-size: 9px; padding: 2px 6px; border-radius: 4px; font-weight: bold; text-transform: uppercase; margin-top: 5px; display: inline-block; }
-        .bullish { background: rgba(34, 197, 94, 0.2); color: var(--green); border: 1px solid var(--green); }
-        .bearish { background: rgba(239, 68, 68, 0.2); color: var(--red); border: 1px solid var(--red); }
-        .market-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
-        .list-item { background: #1e293b; padding: 12px; border-radius: 8px; border-left: 4px solid #eab308; cursor: pointer; }
-        .search-box { width: 100%; padding: 12px; border-radius: 8px; border: 1px solid #333; background: #111; color: white; margin-bottom: 15px; outline: none; box-sizing: border-box; }
-        .oc-table { width: 100%; border-collapse: collapse; font-size: 12px; text-align: center; margin-top: 10px; border: 1px solid #333; }
-        .oc-table th { background: #000; color: #eab308; padding: 10px; border: 1px solid #222; }
-        .oc-table td { padding: 10px; border: 1px solid #222; background: rgba(30, 41, 59, 0.5); }
-        .hidden { display: none; }
+        :root { --gold: #bf953f; --bg: #060606; --card: #0f172a; }
+        body { margin: 0; background: var(--bg); color: white; font-family: sans-serif; text-align: center; }
+        .header { background: #000; padding: 15px; border-bottom: 2px solid var(--gold); }
+        .container { padding: 15px; }
+        .box { background: var(--card); border-radius: 12px; padding: 20px; border: 1px solid #1e293b; margin-bottom: 20px; }
+        .btn-chart { 
+            background: linear-gradient(45deg, #bf953f, #fcf6ba); 
+            color: black; padding: 15px; border-radius: 8px; 
+            display: block; text-decoration: none; font-weight: bold; margin-top: 10px;
+        }
+        .stock-list { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+        .stock-item { background: #1e293b; padding: 15px; border-radius: 8px; cursor: pointer; border: 1px solid #333; }
     </style>
 </head>
 <body>
 
-<div class="header"><h2>SKL SCANNER V3 PRO 🚀</h2></div>
-
-<div class="nav-tabs">
-    <div class="tab active" onclick="showTab('dash')">DASHBOARD</div>
-    <div class="tab" onclick="showTab('opt_chain')">OPTION CHAIN</div>
-    <div class="tab" onclick="showTab('fno')">206 FnO (NSE/BSE)</div>
-    <div class="tab" onclick="showTab('mcx')">COMMODITY (MCX)</div>
-</div>
+<div class="header"><h2>SKL SCANNER V4 🚀</h2></div>
 
 <div class="container">
-    <div id="tab_dash">
-        <div class="box" style="border: 2px dashed #ff4d4d; text-align: center;">
-            <h4 style="color:#ff4d4d; margin:0;">🔥 AUTOMATIC JACKPOT SIGNAL</h4>
-            <div id="hero_stock" style="font-size: 24px; font-weight: 900; margin: 10px 0;">NIFTY</div>
-            <div id="hero_sig" class="sig-badge bullish">BULLISH CONFIRMED ✅</div>
-        </div>
-        <div class="box" style="height: 500px; padding: 0; overflow: hidden; border: 2px solid #bf953f;">
-            <div id="tv_chart_main" style="height: 100%;"></div>
-        </div>
-    </div>
-
-    <div id="tab_opt_chain" class="hidden">
-        <div class="box">
-            <h4 style="color:#eab308; margin-top:0; text-align: center;">📊 OI & STRIKE PRICE ANALYSIS</h4>
-            <table class="oc-table">
-                <thead><tr><th>CALL (CE)</th><th>STRIKE</th><th>PUT (PE)</th></tr></thead>
-                <tbody id="oc_data"></tbody>
-            </table>
-        </div>
-    </div>
-
-    <div id="tab_fno" class="hidden">
-        <input type="text" id="stockSearch" class="search-box" placeholder="Search Stocks..." onkeyup="filterData()">
-        <div class="market-grid" id="fno_container"></div>
-    </div>
-
-    <div id="tab_mcx" class="hidden">
-        <div class="market-grid" id="mcx_list"></div>
-    </div>
-</div>
-
-<script>
-    const fnoStocks = ["NIFTY", "BANKNIFTY", "RELIANCE", "HDFCBANK", "SBIN", "TCS", "INFY", "TATAMOTORS", "ADANIENT", "BHARTIARTL", "ICICIBANK", "BAJFINANCE", "ITC", "WIPRO", "AXISBANK", "AARTIIND", "ABB", "ACC", "AMBUJACEM", "APOLLOHOSP", "ASHOKLEY", "ASIANPAINT", "ASTRAL", "AUROPHARMA", "BAJAJ-AUTO", "BALKRISIND", "BANDHANBNK", "BANKBARODA", "BEL", "BHEL", "BIOCON", "BPCL", "BRITANNIA", "CANBK", "CHOLAFIN", "CIPLA", "COALINDIA", "CONCOR", "DLF", "DRREDDY", "EICHERMOT", "FEDERALBNK", "GAIL", "GLENMARK", "GRASIM", "HAL", "HCLTECH", "HINDALCO", "HINDCOPPER", "HINDUNILVR", "INDIGO", "INDUSINDBK", "JSWSTEEL", "KOTAKBANK", "LT", "LUPIN", "M&M", "MARUTI", "ONGC", "PFC", "POWERGRID", "SAIL", "SUNPHARMA", "TATASTEEL", "TITAN", "ULTRACEMCO", "VEDL", "ZEEL"];
-    const commodities = ["GOLD", "SILVER", "CRUDEOIL", "NATURALGAS"];
-
-    function renderScanner(data, containerId, prefix) {
-        const container = document.getElementById(containerId);
-        container.innerHTML = "";
-        data.forEach(s => {
-            const isBullish = Math.random() > 0.5;
-            const div = document.createElement('div');
-            div.className = "list-item";
-            div.onclick = () => { selectStock(s, isBullish, prefix); };
-            div.innerHTML = `<b>${s}</b><br><span class="sig-badge ${isBullish ? 'bullish' : 'bearish'}">${isBullish ? 'BUY' : 'SELL'}</span>`;
-            container.appendChild(div);
-        });
-    }
-
-    function selectStock(name, isBullish, prefix) {
-        showTab('dash');
-        let fullSymbol = (prefix === "MCX:") ? "MCX:" + name + "1!" : "NSE:" + name;
-        loadChart(fullSymbol);
-        document.getElementById('hero_stock').innerText = name;
-        const heroBadge = document.getElementById('hero_sig');
-        heroBadge.className = `sig-badge ${isBullish ? 'bullish' : 'bearish'}`;
-        heroBadge.innerText = isBullish ? 'BULLISH CONFIRMED ✅' : 'BEARISH CONFIRMED ❌';
-    }
-
-    function loadChart(symbol) {
-        const chartDiv = document.getElementById('tv_chart_main');
-        chartDiv.innerHTML = `
-            <iframe 
-                src="https://s.tradingview.com/widgetembed/?symbol=${symbol}&interval=5&theme=dark&style=1&timezone=Asia%2FKolkata&locale=in"
-                width="100%" height="100%" frameborder="0" allowtransparency="true" scrolling="no" allowfullscreen>
-            </iframe>`;
-    }
-
-    function generateOptionChain(name) {
-        const tbody = document.getElementById('oc_data');
-        tbody.innerHTML = "";
-        for(let i=0; i<5; i++) {
-            tbody.innerHTML += `<tr><td style="color:var(--green)">OI BULLISH</td><td><b>STRIKE ${i}</b></td><td style="color:var(--red)">OI BEARISH</td></tr>`;
-        }
-    }
-
-    function filterData() {
-        let val = document.getElementById('stockSearch').value.toUpperCase();
-        let items = document.getElementById('fno_container').getElementsByClassName('list-item');
-        for (let i = 0; i < items.length; i++) {
-            items[i].style.display = items[i].innerText.toUpperCase().includes(val) ? "" : "none";
-        }
-    }
-
-    function showTab(name) {
-        document.querySelectorAll('.container > div').forEach(d => d.classList.add('hidden'));
-        document.getElementById('tab_' + name).classList.remove('hidden');
-        document.querySelectorAll('.tab').forEach(t => {
-            t.classList.remove('active');
-            if(t.innerText.includes(name.toUpperCase())) t.classList.add('active');
-        });
-    }
-
-    window.onload = () => {
-        renderScanner(fnoStocks, 'fno_container', 'NSE:');
-        renderScanner(commodities, 'mcx_list', 'MCX:');
-        generateOptionChain("NIFTY");
-        loadChart("NSE:NIFTY");
-    };
-</script>
-</body>
-</html>
+    <div class="box">
+        <h3 id="s_name">NIFTY</h3>
+        <p
