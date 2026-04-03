@@ -45,7 +45,7 @@
             <h4 style="color:#ff4d4d; margin:0;">🔥 AUTOMATIC JACKPOT SIGNAL</h4>
             <div id="hero_stock" style="font-size: 24px; font-weight: 900; margin: 10px 0;">NIFTY</div>
             <div id="hero_sig" class="sig-badge bullish">SCANNING LIVE...</div>
-            <p style="font-size: 10px; color: #aaa; margin-top: 5px;">ENTRY: <span id="entry_p">---</span> | TARGET: <span id="target_p">---</span></p>
+            <p style="font-size: 10px; color: #aaa; margin-top: 5px;">ENTRY: <span id="entry_p">LIVE</span> | TARGET: <span id="target_p">DATA</span></p>
         </div>
         <div class="box" style="height: 450px; padding: 0; overflow: hidden; border: 2px solid #bf953f;">
             <div id="tv_chart_main" style="height: 100%;"></div>
@@ -118,25 +118,24 @@
         const heroBadge = document.getElementById('hero_sig');
         heroBadge.className = `sig-badge ${isBullish ? 'bullish' : 'bearish'}`;
         heroBadge.innerText = isBullish ? 'BULLISH CONFIRMED ✅' : 'BEARISH CONFIRMED ❌';
-        document.getElementById('entry_p').innerText = "CALCULATING";
-        document.getElementById('target_p').innerText = "LIVE DATA";
     }
 
     function loadChart(symbol) {
+        // Fix: Automatically ensure prefix is present
+        let finalSymbol = symbol.includes(":") ? symbol : "NSE:" + symbol;
+        
         new TradingView.widget({
             "container_id": "tv_chart_main",
-            "symbol": symbol,
+            "symbol": finalSymbol,
             "interval": "5",
             "theme": "dark",
             "style": "1",
             "autosize": true,
             "locale": "in",
             "timezone": "Asia/Kolkata",
-            "toolbar_bg": "#f1f3f6",
-            "enable_publishing": false,
             "hide_top_toolbar": false,
             "allow_symbol_change": true,
-            "container_id": "tv_chart_main"
+            "save_image": false
         });
     }
 
@@ -152,7 +151,6 @@
         document.querySelectorAll('.container > div').forEach(d => d.classList.add('hidden'));
         document.getElementById('tab_' + name).classList.remove('hidden');
         document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
-        event.currentTarget.classList.add('active');
     }
 
     window.onload = () => {
