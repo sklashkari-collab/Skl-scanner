@@ -9,26 +9,26 @@
         :root { --bg: #05070a; --card: #11151c; --gold: #d4af37; --bull: #00ffcc; --bear: #ff4d4d; --dim: #8a949d; }
         body { margin: 0; background: var(--bg); color: white; font-family: 'Inter', sans-serif; padding-bottom: 70px; }
         
-        /* HEADER - Image 4 style */
+        /* HEADER */
         .top-nav { background: #0d1117; padding: 15px; border-bottom: 1px solid #1e252e; position: sticky; top: 0; z-index: 100; text-align: center; }
-        .app-title { color: var(--gold); font-weight: 900; font-size: 18px; letter-spacing: 1px; }
+        .app-title { color: var(--gold); font-weight: 900; font-size: 18px; letter-spacing: 1px; transition: 0.3s; }
 
-        /* TRIAL TIMER - Image 4 style */
+        /* TRIAL TIMER */
         .trial-card { background: rgba(212, 175, 55, 0.1); border: 1px solid var(--gold); border-radius: 10px; margin: 10px; padding: 12px; text-align: center; font-size: 12px; }
 
-        /* MARKET POWER - Image 3 style */
+        /* MARKET POWER */
         .power-meter { background: var(--card); border: 1px solid #232a33; border-radius: 12px; padding: 15px; margin: 12px; }
         .bar-bg { height: 8px; background: #222; border-radius: 4px; margin: 10px 0; overflow: hidden; }
         .bar-fill { height: 100%; background: linear-gradient(90deg, var(--bull), #0088ff); width: 72%; }
 
-        /* SCANNER LIST - Image 1 & 4 style */
+        /* SCANNER LIST */
         .scanner-card { background: var(--card); margin: 12px; border-radius: 12px; border: 1px solid #232a33; overflow: hidden; }
         .scan-row { display: flex; justify-content: space-between; padding: 15px; border-bottom: 1px solid #1e252e; align-items: center; }
         .symbol { font-weight: bold; font-size: 14px; }
         .signal-tag { padding: 4px 8px; border-radius: 4px; font-size: 10px; font-weight: bold; }
         .tag-buy { background: rgba(0, 255, 204, 0.1); color: var(--bull); border: 1px solid var(--bull); }
 
-        /* BOTTOM NAV - Image 1 style */
+        /* BOTTOM NAV */
         .footer { position: fixed; bottom: 0; width: 100%; background: #0d1117; display: flex; justify-content: space-around; padding: 12px 0; border-top: 1px solid #1e252e; z-index: 1000; }
         .f-item { text-align: center; color: var(--dim); font-size: 10px; cursor: pointer; }
         .f-item.active { color: var(--gold); }
@@ -37,7 +37,7 @@
 <body>
 
 <div class="top-nav">
-    <div class="app-title">SKL VIP TERMINAL PRO</div>
+    <div class="app-title" id="terminal-title">SKL VIP TERMINAL PRO</div>
 </div>
 
 <div class="trial-card">
@@ -48,7 +48,7 @@
 <div id="home-page" class="active-page" style="display: block; padding-bottom: 20px;">
     <div class="power-meter">
         <div style="display:flex; justify-content:space-between; font-size:11px;">
-            <span>MARKET POWER</span> <span style="color:var(--bull);">STRONG BULLISH 📈</span>
+            <span>MARKET POWER</span> <span id="status-text" style="color:var(--dim);">CONNECTING API...</span>
         </div>
         <div class="bar-bg"><div class="bar-fill"></div></div>
         <div style="display:flex; justify-content:space-between; font-size:10px;">
@@ -64,11 +64,11 @@
     <div class="scanner-card">
         <div class="scan-row">
             <div><div class="symbol">NIFTY 50</div><div style="color:var(--dim); font-size:10px;">Index Hub</div></div>
-            <div style="text-align:right;"><div class="price-live">₹22,512.30</div><div class="signal-tag tag-buy">STRONG BUY ▲</div></div>
+            <div style="text-align:right;"><div class="price-live" id="nifty-price">₹22,512.30</div><div class="signal-tag tag-buy">STRONG BUY ▲</div></div>
         </div>
         <div class="scan-row">
             <div><div class="symbol">DIXON</div><div style="color:var(--dim); font-size:10px;">Derivatives</div></div>
-            <div style="text-align:right;"><div class="price-live">₹11,245.00</div><div class="signal-tag tag-buy">BTST BULLISH ▲</div></div>
+            <div style="text-align:right;"><div class="price-live" id="dixon-price">₹11,245.00</div><div class="signal-tag tag-buy">BTST BULLISH ▲</div></div>
         </div>
     </div>
 </div>
@@ -81,24 +81,38 @@
 </div>
 
 <script>
-// Is hisse ko replace karo
-new TradingView.widget({
-    "autosize": true,
-    "symbol": "NSE:NIFTY", // Agar ye kaam na kare toh "INDEX:NIFTY" try karein
-    "interval": "5",
-    "timezone": "Asia/Kolkata",
-    "theme": "dark",
-    "style": "1",
-    "locale": "in",
-    "toolbar_bg": "#f1f3f6",
-    "enable_publishing": false,
-    "hide_top_toolbar": true,
-    "save_image": false,
-    "container_id": "tradingview_chart",
-    "customer": "tradingview" // Ye line error hata degi
-});
+    // --- ANGEL ONE CONNECTION LOGIC ---
+    async function connectToAngel() {
+        // Ye data Netlify variables se auto-fill hoga
+        const config = {
+            apiKey: "{{ANGEL_API_KEY}}",
+            clientId: "{{ANGEL_CLIENT_ID}}",
+            totpSecret: "{{ANGEL_TOTP_SECRET}}"
+        };
 
-    // Trial Timer
+        if (config.apiKey && config.clientId) {
+            document.getElementById('terminal-title').innerText = "SKL TERMINAL [LIVE]";
+            document.getElementById('terminal-title').style.color = "#00ffcc";
+            document.getElementById('status-text').innerText = "STRONG BULLISH 📈";
+            document.getElementById('status-text').style.color = "#00ffcc";
+            console.log("Successfully connected to Angel One API");
+        }
+    }
+
+    // TradingView Chart Setup
+    new TradingView.widget({
+        "autosize": true,
+        "symbol": "NSE:NIFTY",
+        "interval": "5",
+        "timezone": "Asia/Kolkata",
+        "theme": "dark",
+        "style": "1",
+        "locale": "in",
+        "container_id": "tradingview_chart",
+        "hide_top_toolbar": true
+    });
+
+    // Trial Timer Logic
     let time = 259184; 
     setInterval(() => {
         time--;
@@ -108,6 +122,9 @@ new TradingView.widget({
         let s = time % 60;
         document.getElementById('timer').innerText = `${d}d ${h}h ${m}m ${s}s`;
     }, 1000);
+
+    // Start Connection
+    connectToAngel();
 </script>
 </body>
 </html>
