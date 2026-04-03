@@ -1,155 +1,56 @@
 <!DOCTYPE html>
-<html lang="hi">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>SKL MASTER TERMINAL</title>
-    <script src="https://s3.tradingview.com/tv.js"></script>
+    <title>VIP SKL TERMINAL - LOGIN</title>
     <style>
-        :root { --primary: #0052fe; --bg: #000; --card: #121212; --green: #00ff88; --red: #ff4d4d; --gold: #bf953f; }
-        body { margin: 0; background: var(--bg); color: white; font-family: 'Inter', sans-serif; height: 100vh; display: flex; flex-direction: column; overflow: hidden; }
-        
-        /* Header */
-        .header { padding: 15px; background: #080808; border-bottom: 1px solid #222; display: flex; justify-content: space-between; align-items: center; }
-        .logo { color: var(--gold); font-weight: bold; font-size: 18px; }
-
-        /* Page Navigation */
-        .page { display: none; flex: 1; flex-direction: column; overflow-y: auto; padding-bottom: 80px; }
-        .page.active { display: flex; }
-
-        /* Professional Grid (Angel One Style) */
-        .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; padding: 15px; }
-        .stock-card { background: var(--card); border: 1px solid #222; border-radius: 12px; padding: 15px; cursor: pointer; position: relative; }
-        .stock-card:active { border-color: var(--primary); transform: scale(0.98); }
-        .sig-badge { font-size: 10px; font-weight: bold; color: var(--green); margin-top: 5px; display: block; }
-
-        /* Chart Section */
-        .chart-container { flex: 1; min-height: 380px; background: #000; }
-        .bottom-details { height: 220px; background: #0a0a0a; border-top: 2px solid #222; padding: 15px; }
-
-        /* Bottom Nav (Upstox Style) */
-        .bottom-nav { position: fixed; bottom: 0; width: 100%; background: #080808; border-top: 1px solid #222; display: flex; height: 70px; z-index: 1000; }
-        .nav-item { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; font-size: 11px; color: #555; cursor: pointer; }
-        .nav-item.active { color: var(--primary); font-weight: bold; }
-        .nav-icon { font-size: 22px; margin-bottom: 4px; }
-
-        .search-bar { width: 90%; margin: 10px auto; padding: 12px; background: #111; border: 1px solid #333; color: white; border-radius: 8px; display: block; outline: none; }
+        :root { --gold: #bf953f; --bg: #000; --card: #121212; --primary: #0052fe; }
+        body { margin: 0; background: var(--bg); color: white; font-family: 'Inter', sans-serif; display: flex; align-items: center; justify-content: center; height: 100vh; overflow: hidden; }
+        .login-card { width: 90%; max-width: 400px; background: var(--card); padding: 30px; border-radius: 20px; border: 1px solid #333; text-align: center; }
+        .logo { font-size: 28px; font-weight: bold; color: var(--gold); margin-bottom: 10px; }
+        .tagline { font-size: 14px; color: #888; margin-bottom: 30px; }
+        input { width: 100%; padding: 15px; margin-bottom: 20px; background: #000; border: 1px solid #444; color: white; border-radius: 10px; font-size: 16px; box-sizing: border-box; }
+        button { width: 100%; padding: 15px; background: var(--gold); border: none; border-radius: 10px; color: black; font-weight: bold; font-size: 16px; cursor: pointer; }
+        .otp-screen { display: none; }
+        .timer { font-size: 12px; color: var(--gold); margin-top: 10px; }
     </style>
 </head>
 <body>
 
-<div class="header">
-    <div class="logo">SKL TERMINAL PRO</div>
-    <div style="font-size: 10px; color: var(--green);">● LIVE DATA</div>
+<div class="login-card" id="login-step">
+    <div class="logo">SKL VIP TERMINAL</div>
+    <div class="tagline">Premium Access for Professional Traders</div>
+    <input type="tel" id="mobile" placeholder="Enter Mobile Number" maxlength="10">
+    <button onclick="sendOTP()">GET OTP</button>
 </div>
 
-<div id="p-terminal" class="page active">
-    <div class="chart-container" id="main_chart_area"></div>
-    <div class="bottom-details">
-        <h3 id="display-name" style="margin:0; color:var(--gold);">NIFTY 50</h3>
-        <p style="font-size:12px; color:#666; margin:5px 0;">AI SIGNAL METER (1m & 5m)</p>
-        <iframe id="signal-meter" style="width:100%; height:130px; border:none;"></iframe>
-    </div>
-</div>
-
-<div id="p-fno" class="page">
-    <input type="text" class="search-bar" placeholder="Search FnO Stocks..." onkeyup="filterStocks(this.value, 'fno-grid')">
-    <div class="grid" id="fno-grid"></div>
-</div>
-
-<div id="p-equity" class="page">
-    <input type="text" class="search-bar" placeholder="Search Equity..." onkeyup="filterStocks(this.value, 'equity-grid')">
-    <div class="grid" id="equity-grid"></div>
-</div>
-
-<div id="p-mcx" class="page">
-    <div class="grid" id="mcx-grid"></div>
-</div>
-
-<div class="bottom-nav">
-    <div class="nav-item active" onclick="switchPage('p-terminal', this)">
-        <span class="nav-icon">📊</span>CHART
-    </div>
-    <div class="nav-item" onclick="switchPage('p-fno', this)">
-        <span class="nav-icon">🔥</span>F&O
-    </div>
-    <div class="nav-item" onclick="switchPage('p-equity', this)">
-        <span class="nav-icon">💰</span>CASH
-    </div>
-    <div class="nav-item" onclick="switchPage('p-mcx', this)">
-        <span class="nav-icon">⛏️</span>MCX
-    </div>
+<div class="login-card otp-screen" id="otp-step">
+    <div class="logo">VERIFY OTP</div>
+    <div class="tagline">OTP sent to your mobile number</div>
+    <input type="number" id="otp-input" placeholder="Enter 6-Digit OTP">
+    <button onclick="verifyLogin()">VERIFY & LOGIN</button>
+    <div class="timer">Resend OTP in 59s</div>
 </div>
 
 <script>
-    // Stock Data
-    const fno = ["NIFTY", "BANKNIFTY", "RELIANCE", "SBIN", "HDFCBANK", "ICICIBANK", "INFY", "TCS", "TATAMOTORS", "ADANIPORTS", "ITC", "JSWSTEEL", "AARTIIND", "ABFRL", "ACC"];
-    const cash = ["ZOMATO", "SUZLON", "YESBANK", "IRFC", "RVNL", "JIOFIN", "TATASTEEL", "NHPC", "IDEA", "IFCI"];
-    const mcx = ["CRUDEOIL", "SILVER", "GOLD", "NATURALGAS"];
-
-    function switchPage(pageId, element) {
-        document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-        document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
-        document.getElementById(pageId).classList.add('active');
-        element.classList.add('active');
+    function sendOTP() {
+        let mobile = document.getElementById('mobile').value;
+        if(mobile.length === 10) {
+            document.getElementById('login-step').style.display = 'none';
+            document.getElementById('otp-step').style.display = 'block';
+            alert("OTP Sent Successfully (Demo Mode)");
+        } else {
+            alert("Please enter a valid 10-digit mobile number");
+        }
     }
 
-    function loadGrids() {
-        renderGrid('fno-grid', fno, 'NSE:');
-        renderGrid('equity-grid', cash, 'NSE:');
-        renderGrid('mcx-grid', mcx, 'MCX:');
+    function verifyLogin() {
+        // Step 2 logic will trigger trial period start
+        localStorage.setItem('vip_user_logged', 'true');
+        localStorage.setItem('trial_start_date', new Date().getTime());
+        window.location.href = "dashboard.html"; // Next step will create this page
     }
-
-    function renderGrid(containerId, list, prefix) {
-        const container = document.getElementById(containerId);
-        list.forEach(s => {
-            const card = document.createElement('div');
-            card.className = 'stock-card';
-            // Symbol fix logic: Use TVC for commodities to avoid error
-            let finalSym = (prefix === 'MCX:') ? 'TVC:' + s : prefix + s;
-            
-            card.onclick = () => { 
-                updateTerminal(finalSym, s); 
-                switchPage('p-terminal', document.querySelector('.nav-item')); 
-            };
-            card.innerHTML = `<b>${s}</b><span class="sig-badge">STRONG BUY 🚀</span>`;
-            container.appendChild(card);
-        });
-    }
-
-    function updateTerminal(sym, name) {
-        document.getElementById('display-name').innerText = name;
-        
-        // Professional Widget Fix
-        new TradingView.widget({
-            "autosize": true,
-            "symbol": sym,
-            "interval": "5",
-            "timezone": "Asia/Kolkata",
-            "theme": "dark",
-            "style": "1",
-            "locale": "in",
-            "toolbar_bg": "#f1f3f6",
-            "enable_publishing": false,
-            "hide_side_toolbar": false,
-            "allow_symbol_change": true,
-            "container_id": "main_chart_area"
-        });
-
-        document.getElementById('signal-meter').src = `https://s.tradingview.com/embed-widget/technical-analysis/?symbol=${sym}&interval=1m&theme=dark&locale=in`;
-    }
-
-    function filterStocks(query, gridId) {
-        const cards = document.querySelectorAll(`#${gridId} .stock-card`);
-        cards.forEach(c => {
-            c.style.display = c.innerText.toUpperCase().includes(query.toUpperCase()) ? "block" : "none";
-        });
-    }
-
-    window.onload = () => {
-        loadGrids();
-        updateTerminal("NSE:NIFTY", "NIFTY 50");
-    };
 </script>
 </body>
 </html>
