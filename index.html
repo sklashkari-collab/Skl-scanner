@@ -2,9 +2,8 @@
 <html lang="gu">
 <head>
     <meta charset="UTF-8">
-    <title>SKL SCANNER PRO - V2 LIVE</title>
+    <title>SKL SCANNER PRO - V3 FINAL</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <script src="https://s3.tradingview.com/tv.js"></script>
     <style>
         :root { --gold: linear-gradient(45deg, #bf953f, #fcf6ba, #b38728); --bg: #060606; --card: #0f172a; --red: #ef4444; --green: #22c55e; }
         body { margin: 0; background: var(--bg); color: white; font-family: sans-serif; overflow-x: hidden; }
@@ -23,14 +22,12 @@
         .oc-table { width: 100%; border-collapse: collapse; font-size: 12px; text-align: center; margin-top: 10px; border: 1px solid #333; }
         .oc-table th { background: #000; color: #eab308; padding: 10px; border: 1px solid #222; }
         .oc-table td { padding: 10px; border: 1px solid #222; background: rgba(30, 41, 59, 0.5); }
-        .btn-ce { color: var(--green); font-weight: bold; cursor: pointer; }
-        .btn-pe { color: var(--red); font-weight: bold; cursor: pointer; }
         .hidden { display: none; }
     </style>
 </head>
 <body>
 
-<div class="header"><h2>SKL SCANNER V2 PRO 🚀</h2></div>
+<div class="header"><h2>SKL SCANNER V3 PRO 🚀</h2></div>
 
 <div class="nav-tabs">
     <div class="tab active" onclick="showTab('dash')">DASHBOARD</div>
@@ -44,10 +41,9 @@
         <div class="box" style="border: 2px dashed #ff4d4d; text-align: center;">
             <h4 style="color:#ff4d4d; margin:0;">🔥 AUTOMATIC JACKPOT SIGNAL</h4>
             <div id="hero_stock" style="font-size: 24px; font-weight: 900; margin: 10px 0;">NIFTY</div>
-            <div id="hero_sig" class="sig-badge bullish">SCANNING LIVE...</div>
-            <p style="font-size: 10px; color: #aaa; margin-top: 5px;">ENTRY: <span id="entry_p">LIVE</span> | TARGET: <span id="target_p">DATA</span></p>
+            <div id="hero_sig" class="sig-badge bullish">BULLISH CONFIRMED ✅</div>
         </div>
-        <div class="box" style="height: 450px; padding: 0; overflow: hidden; border: 2px solid #bf953f;">
+        <div class="box" style="height: 500px; padding: 0; overflow: hidden; border: 2px solid #bf953f;">
             <div id="tv_chart_main" style="height: 100%;"></div>
         </div>
     </div>
@@ -63,7 +59,7 @@
     </div>
 
     <div id="tab_fno" class="hidden">
-        <input type="text" id="stockSearch" class="search-box" placeholder="Search NSE/BSE Stocks..." onkeyup="filterData()">
+        <input type="text" id="stockSearch" class="search-box" placeholder="Search Stocks..." onkeyup="filterData()">
         <div class="market-grid" id="fno_container"></div>
     </div>
 
@@ -73,7 +69,6 @@
 </div>
 
 <script>
-    let currentSymbol = "NIFTY";
     const fnoStocks = ["NIFTY", "BANKNIFTY", "RELIANCE", "HDFCBANK", "SBIN", "TCS", "INFY", "TATAMOTORS", "ADANIENT", "BHARTIARTL", "ICICIBANK", "BAJFINANCE", "ITC", "WIPRO", "AXISBANK", "AARTIIND", "ABB", "ACC", "AMBUJACEM", "APOLLOHOSP", "ASHOKLEY", "ASIANPAINT", "ASTRAL", "AUROPHARMA", "BAJAJ-AUTO", "BALKRISIND", "BANDHANBNK", "BANKBARODA", "BEL", "BHEL", "BIOCON", "BPCL", "BRITANNIA", "CANBK", "CHOLAFIN", "CIPLA", "COALINDIA", "CONCOR", "DLF", "DRREDDY", "EICHERMOT", "FEDERALBNK", "GAIL", "GLENMARK", "GRASIM", "HAL", "HCLTECH", "HINDALCO", "HINDCOPPER", "HINDUNILVR", "INDIGO", "INDUSINDBK", "JSWSTEEL", "KOTAKBANK", "LT", "LUPIN", "M&M", "MARUTI", "ONGC", "PFC", "POWERGRID", "SAIL", "SUNPHARMA", "TATASTEEL", "TITAN", "ULTRACEMCO", "VEDL", "ZEEL"];
     const commodities = ["GOLD", "SILVER", "CRUDEOIL", "NATURALGAS"];
 
@@ -85,35 +80,15 @@
             const div = document.createElement('div');
             div.className = "list-item";
             div.onclick = () => { selectStock(s, isBullish, prefix); };
-            div.innerHTML = `<b>${s}</b><br><span class="sig-badge ${isBullish ? 'bullish' : 'bearish'}">${isBullish ? 'ENTRY: BUY' : 'ENTRY: SELL'}</span>`;
+            div.innerHTML = `<b>${s}</b><br><span class="sig-badge ${isBullish ? 'bullish' : 'bearish'}">${isBullish ? 'BUY' : 'SELL'}</span>`;
             container.appendChild(div);
         });
     }
 
     function selectStock(name, isBullish, prefix) {
-        currentSymbol = name;
         showTab('dash');
         let fullSymbol = (prefix === "MCX:") ? "MCX:" + name + "1!" : "NSE:" + name;
         loadChart(fullSymbol);
-        updateHero(name, isBullish);
-        generateOptionChain(name);
-    }
-
-    function generateOptionChain(name) {
-        const tbody = document.getElementById('oc_data');
-        tbody.innerHTML = "";
-        const levels = [-2, -1, 0, 1, 2];
-        levels.forEach(i => {
-            tbody.innerHTML += `
-                <tr>
-                    <td class="btn-ce" onclick="loadChart('NSE:${name}')">OI BULLISH</td>
-                    <td><b>${i==0?'ATM':(i>0?'+'+i:'-'+Math.abs(i))} STRIKE</b></td>
-                    <td class="btn-pe" onclick="loadChart('NSE:${name}')">OI BEARISH</td>
-                </tr>`;
-        });
-    }
-
-    function updateHero(name, isBullish) {
         document.getElementById('hero_stock').innerText = name;
         const heroBadge = document.getElementById('hero_sig');
         heroBadge.className = `sig-badge ${isBullish ? 'bullish' : 'bearish'}`;
@@ -121,24 +96,21 @@
     }
 
     function loadChart(symbol) {
-    // Symbol ko clean karke NSE: lagana
-    let cleanSymbol = symbol.replace("NSE:", "").replace("MCX:", "");
-    let finalSymbol = symbol.includes("MCX:") ? "MCX:" + cleanSymbol : "NSE:" + cleanSymbol;
-    
-    // Iframe method jo har browser mein chalta hai
-    const chartDiv = document.getElementById('tv_chart_main');
-    chartDiv.innerHTML = `
-        <iframe 
-            src="https://s.tradingview.com/widgetembed/?frameElementId=tradingview_7621a&symbol=${finalSymbol}&interval=5&hidesidetoolbar=1&hidetoptoolbar=0&symboledit=1&saveimage=1&toolbarbg=f1f3f6&studies=[]&theme=dark&style=1&timezone=Asia%2FKolkata&studies_overrides={}&overrides={}&enabled_features=[]&disabled_features=[]&locale=in&utm_source=localhost&utm_medium=widget&utm_campaign=chart&utm_term=${finalSymbol}"
-            width="100%" 
-            height="100%" 
-            frameborder="0" 
-            allowtransparency="true" 
-            scrolling="no" 
-            allowfullscreen>
-        </iframe>`;
-}
+        const chartDiv = document.getElementById('tv_chart_main');
+        chartDiv.innerHTML = `
+            <iframe 
+                src="https://s.tradingview.com/widgetembed/?symbol=${symbol}&interval=5&theme=dark&style=1&timezone=Asia%2FKolkata&locale=in"
+                width="100%" height="100%" frameborder="0" allowtransparency="true" scrolling="no" allowfullscreen>
+            </iframe>`;
+    }
 
+    function generateOptionChain(name) {
+        const tbody = document.getElementById('oc_data');
+        tbody.innerHTML = "";
+        for(let i=0; i<5; i++) {
+            tbody.innerHTML += `<tr><td style="color:var(--green)">OI BULLISH</td><td><b>STRIKE ${i}</b></td><td style="color:var(--red)">OI BEARISH</td></tr>`;
+        }
+    }
 
     function filterData() {
         let val = document.getElementById('stockSearch').value.toUpperCase();
@@ -151,7 +123,10 @@
     function showTab(name) {
         document.querySelectorAll('.container > div').forEach(d => d.classList.add('hidden'));
         document.getElementById('tab_' + name).classList.remove('hidden');
-        document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+        document.querySelectorAll('.tab').forEach(t => {
+            t.classList.remove('active');
+            if(t.innerText.includes(name.toUpperCase())) t.classList.add('active');
+        });
     }
 
     window.onload = () => {
