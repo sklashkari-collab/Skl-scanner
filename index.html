@@ -81,12 +81,22 @@
 </div>
 
 <script>
-    // TradingView Chart
-    new TradingView.widget({
-        "autosize": true, "symbol": "NSE:NIFTY", "interval": "5", "timezone": "Asia/Kolkata",
-        "theme": "dark", "style": "1", "locale": "en", "container_id": "tradingview_chart",
-        "hide_top_toolbar": true, "backgroundColor": "#11151c"
-    });
+// Is hisse ko replace karo
+new TradingView.widget({
+    "autosize": true,
+    "symbol": "NSE:NIFTY", // Agar ye kaam na kare toh "INDEX:NIFTY" try karein
+    "interval": "5",
+    "timezone": "Asia/Kolkata",
+    "theme": "dark",
+    "style": "1",
+    "locale": "in",
+    "toolbar_bg": "#f1f3f6",
+    "enable_publishing": false,
+    "hide_top_toolbar": true,
+    "save_image": false,
+    "container_id": "tradingview_chart",
+    "customer": "tradingview" // Ye line error hata degi
+});
 
     // Trial Timer
     let time = 259184; 
