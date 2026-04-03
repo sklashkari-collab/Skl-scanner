@@ -3,54 +3,148 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>VIP SKL TERMINAL - LOGIN</title>
+    <title>SKL VIP TERMINAL PRO - FULL LIST</title>
     <style>
-        :root { --gold: #bf953f; --bg: #000; --card: #121212; --primary: #0052fe; }
-        body { margin: 0; background: var(--bg); color: white; font-family: 'Inter', sans-serif; display: flex; align-items: center; justify-content: center; height: 100vh; overflow: hidden; }
-        .login-card { width: 90%; max-width: 400px; background: var(--card); padding: 30px; border-radius: 20px; border: 1px solid #333; text-align: center; }
-        .logo { font-size: 28px; font-weight: bold; color: var(--gold); margin-bottom: 10px; }
-        .tagline { font-size: 14px; color: #888; margin-bottom: 30px; }
-        input { width: 100%; padding: 15px; margin-bottom: 20px; background: #000; border: 1px solid #444; color: white; border-radius: 10px; font-size: 16px; box-sizing: border-box; }
-        button { width: 100%; padding: 15px; background: var(--gold); border: none; border-radius: 10px; color: black; font-weight: bold; font-size: 16px; cursor: pointer; }
-        .otp-screen { display: none; }
-        .timer { font-size: 12px; color: var(--gold); margin-top: 10px; }
+        :root { 
+            --gold: linear-gradient(135deg, #bf953f, #fcf6ba, #b38728);
+            --dark: #000; --card: #121212; --text-gold: #d4af37;
+        }
+        body { margin: 0; background: var(--dark); color: white; font-family: 'Segoe UI', sans-serif; overflow-x: hidden; padding-bottom: 80px; }
+        
+        .header { padding: 15px; background: #000; border-bottom: 1px solid #d4af3733; text-align: center; position: sticky; top: 0; z-index: 100; }
+        .logo { font-size: 20px; font-weight: 900; background: var(--gold); -webkit-background-clip: text; -webkit-text-fill-color: transparent; letter-spacing: 1px; }
+
+        /* MARKET NAV - FIXED TOP */
+        .market-nav { display: flex; overflow-x: auto; gap: 10px; padding: 12px; background: #080808; border-bottom: 1px solid #222; scrollbar-width: none; }
+        .m-btn { background: #1a1a1a; color: #888; border: 1px solid #333; padding: 8px 18px; border-radius: 20px; font-size: 12px; font-weight: bold; white-space: nowrap; cursor: pointer; transition: 0.3s; }
+        .m-btn.active { background: var(--gold); color: black; border: none; transform: scale(1.05); }
+
+        /* CONTENT WRAPPER */
+        .content-area { padding: 10px; }
+        .page { display: none; }
+        .page.active { display: block; animation: fadeIn 0.4s; }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+        /* VIP WATCHLIST CARD */
+        .vip-list-card { background: var(--card); border-radius: 15px; border: 1px solid #d4af3722; overflow: hidden; margin-bottom: 20px; }
+        .list-header { background: #1a1a1a; padding: 10px 15px; font-size: 11px; color: var(--text-gold); display: flex; justify-content: space-between; font-weight: bold; border-bottom: 1px solid #222; }
+        
+        .stock-item { display: flex; justify-content: space-between; align-items: center; padding: 14px 15px; border-bottom: 1px solid #222; transition: 0.2s; }
+        .stock-item:active { background: #1a1a1a; }
+        .name-box { display: flex; flex-direction: column; }
+        .s-name { font-weight: bold; font-size: 15px; color: #fff; }
+        .s-exch { font-size: 10px; color: #666; }
+        .price-box { text-align: right; }
+        .s-price { font-weight: bold; font-size: 15px; display: block; }
+        .s-change { font-size: 11px; font-weight: bold; }
+        .up { color: #00ff00; } .down { color: #ff3e3e; }
+
+        /* VIP BADGE */
+        .vip-badge { font-size: 9px; background: var(--gold); color: black; padding: 2px 6px; border-radius: 4px; font-weight: 900; margin-left: 5px; vertical-align: middle; }
+
+        /* BOTTOM NAV */
+        .bottom-nav { position: fixed; bottom: 0; width: 100%; background: #000; display: flex; justify-content: space-around; padding: 12px 0; border-top: 1px solid #d4af3733; box-shadow: 0 -5px 15px rgba(0,0,0,0.5); }
+        .nav-item { text-align: center; font-size: 10px; color: #555; cursor: pointer; }
+        .nav-item.active { color: var(--text-gold); }
+        .nav-icon { font-size: 18px; margin-bottom: 3px; display: block; }
     </style>
 </head>
 <body>
 
-<div class="login-card" id="login-step">
-    <div class="logo">SKL VIP TERMINAL</div>
-    <div class="tagline">Premium Access for Professional Traders</div>
-    <input type="tel" id="mobile" placeholder="Enter Mobile Number" maxlength="10">
-    <button onclick="sendOTP()">GET OTP</button>
+<div class="header"><div class="logo">SKL VIP TERMINAL PRO</div></div>
+
+<div class="market-nav">
+    <div class="m-btn active" onclick="switchPage('index-page', this)">INDEX HUB</div>
+    <div class="m-btn" onclick="switchPage('equity-page', this)">EQUITY STOCKS</div>
+    <div class="m-btn" onclick="switchPage('fno-page', this)">F&O TERMINAL</div>
+    <div class="m-btn" onclick="switchPage('commodity-page', this)">COMMODITY</div>
 </div>
 
-<div class="login-card otp-screen" id="otp-step">
-    <div class="logo">VERIFY OTP</div>
-    <div class="tagline">OTP sent to your mobile number</div>
-    <input type="number" id="otp-input" placeholder="Enter 6-Digit OTP">
-    <button onclick="verifyLogin()">VERIFY & LOGIN</button>
-    <div class="timer">Resend OTP in 59s</div>
+<div class="content-area">
+    <div id="index-page" class="page active">
+        <div class="vip-list-card">
+            <div class="list-header"><span>SYMBOL</span> <span>LTP & CHANGE</span></div>
+            <div class="stock-item">
+                <div class="name-box"><span class="s-name">NIFTY 50 <span class="vip-badge">LIVE</span></span><span class="s-exch">NSE INDEX</span></div>
+                <div class="price-box"><span class="s-price">22,512.40</span><span class="s-change up">+0.45%</span></div>
+            </div>
+            <div class="stock-item">
+                <div class="name-box"><span class="s-name">BANK NIFTY</span><span class="s-exch">NSE INDEX</span></div>
+                <div class="price-box"><span class="s-price">48,210.15</span><span class="s-change up">+1.12%</span></div>
+            </div>
+            <div class="stock-item">
+                <div class="name-box"><span class="s-name">FIN NIFTY</span><span class="s-exch">NSE INDEX</span></div>
+                <div class="price-box"><span class="s-price">21,430.60</span><span class="s-change down">-0.15%</span></div>
+            </div>
+        </div>
+    </div>
+
+    <div id="equity-page" class="page">
+        <div class="vip-list-card">
+            <div class="list-header"><span>EQUITY WATCHLIST</span> <span>VIP SIGNAL</span></div>
+            <div class="stock-item">
+                <div class="name-box"><span class="s-name">RELIANCE</span><span class="s-exch">EQUITY</span></div>
+                <div class="price-box"><span class="s-price">2,945.00</span><span class="s-change up">STRONG BUY</span></div>
+            </div>
+            <div class="stock-item">
+                <div class="name-box"><span class="s-name">TCS</span><span class="s-exch">EQUITY</span></div>
+                <div class="price-box"><span class="s-price">4,012.20</span><span class="s-change down">NEUTRAL</span></div>
+            </div>
+            <div class="stock-item">
+                <div class="name-box"><span class="s-name">HDFC BANK</span><span class="s-exch">EQUITY</span></div>
+                <div class="price-box"><span class="s-price">1,530.45</span><span class="s-change up">BTST BULLISH</span></div>
+            </div>
+            <div class="stock-item">
+                <div class="name-box"><span class="s-name">ICICI BANK</span><span class="s-exch">EQUITY</span></div>
+                <div class="price-box"><span class="s-price">1,085.00</span><span class="s-change up">BREAKOUT</span></div>
+            </div>
+            <div class="stock-item">
+                <div class="name-box"><span class="s-name">ADANI ENT</span><span class="s-exch">EQUITY</span></div>
+                <div class="price-box"><span class="s-price">3,240.80</span><span class="s-change up">VIP PICK</span></div>
+            </div>
+        </div>
+    </div>
+
+    <div id="fno-page" class="page">
+        <div class="vip-list-card">
+            <div class="list-header"><span>F&O ACTIVE STOCKS</span> <span>OI STATUS</span></div>
+            <div class="stock-item">
+                <div class="name-box"><span class="s-name">DIXON <span class="vip-badge">HOT</span></span><span class="s-exch">DERIVATIVES</span></div>
+                <div class="price-box"><span class="s-price">11,245.00</span><span class="s-change up">LONG BUILDUP</span></div>
+            </div>
+            <div class="stock-item">
+                <div class="name-box"><span class="s-name">BAJAJ FINANCE</span><span class="s-exch">DERIVATIVES</span></div>
+                <div class="price-box"><span class="s-price">7,120.00</span><span class="s-change down">SHORT COVERING</span></div>
+            </div>
+            <div class="stock-item">
+                <div class="name-box"><span class="s-name">AARTI IND</span><span class="s-exch">DERIVATIVES</span></div>
+                <div class="price-box"><span class="s-price">745.30</span><span class="s-change up">STRONG BUY</span></div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="bottom-nav">
+    <div class="nav-item active" onclick="switchNav('home')"><span class="nav-icon">🏠</span>HOME</div>
+    <div class="nav-item" onclick="switchNav('chart')"><span class="nav-icon">📈</span>VIP CHART</div>
+    <div class="nav-item" onclick="switchNav('options')"><span class="nav-icon">⛓️</span>OPTIONS</div>
+    <div class="nav-item" onclick="switchNav('account')"><span class="nav-icon">👤</span>ACCOUNT</div>
 </div>
 
 <script>
-    function sendOTP() {
-        let mobile = document.getElementById('mobile').value;
-        if(mobile.length === 10) {
-            document.getElementById('login-step').style.display = 'none';
-            document.getElementById('otp-step').style.display = 'block';
-            alert("OTP Sent Successfully (Demo Mode)");
-        } else {
-            alert("Please enter a valid 10-digit mobile number");
-        }
+    function switchPage(pageId, btn) {
+        document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+        document.querySelectorAll('.m-btn').forEach(b => b.classList.remove('active'));
+        document.getElementById(pageId).classList.add('active');
+        btn.classList.add('active');
     }
 
-    function verifyLogin() {
-        // Step 2 logic will trigger trial period start
-        localStorage.setItem('vip_user_logged', 'true');
-        localStorage.setItem('trial_start_date', new Date().getTime());
-        window.location.href = "dashboard.html"; // Next step will create this page
+    function switchNav(type) {
+        document.querySelectorAll('.nav-item').forEach(i => i.classList.remove('active'));
+        event.currentTarget.classList.add('active');
+        if(type === 'chart') alert("VIP CHART Integration: Opening TradingView Gold...");
     }
 </script>
+
 </body>
 </html>
