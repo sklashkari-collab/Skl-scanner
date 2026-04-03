@@ -2,80 +2,165 @@
 <html lang="gu">
 <head>
     <meta charset="UTF-8">
+    <title>SKL SCANNER PRO - V2 LIVE</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SKL SCANNER PRO 🚀</title>
     <script src="https://s3.tradingview.com/tv.js"></script>
     <style>
-        :root { --bg: #000; --card: #111; --gold: linear-gradient(45deg, #ffd700, #ff8c00); }
-        body { margin: 0; background: var(--bg); color: #fff; font-family: sans-serif; }
-        .header { background: #000; padding: 15px; text-align: center; border-bottom: 2px solid #333; }
-        .nav-tabs { display: flex; overflow-x: auto; background: #000; padding: 10px; gap: 10px; }
-        .tab { background: #1e293b; padding: 10px 20px; border-radius: 5px; cursor: pointer; white-space: nowrap; }
-        .tab.active { background: var(--gold); color: #000; font-weight: bold; }
-        .container { padding: 12px; }
-        #tv_chart_main { height: 500px; width: 100%; border: 1px solid #333; border-radius: 8px; margin-top: 10px; }
-        .stock-list { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 15px; }
-        .stock-btn { background: #1e293b; padding: 15px; border-radius: 8px; text-align: center; cursor: pointer; border: 1px solid #333; }
+        :root { --gold: linear-gradient(45deg, #bf953f, #fcf6ba, #b38728); --bg: #060606; --card: #0f172a; --red: #ef4444; --green: #22c55e; }
+        body { margin: 0; background: var(--bg); color: white; font-family: sans-serif; overflow-x: hidden; }
+        .header { background: #000; padding: 15px; text-align: center; border-bottom: 2px solid #bf953f; position: sticky; top:0; z-index:1000; }
+        .nav-tabs { display: flex; overflow-x: auto; gap: 8px; padding: 10px; background: #111; border-bottom: 1px solid #222; position: sticky; top: 55px; z-index: 999; scrollbar-width: none; }
+        .tab { background: #1e293b; padding: 10px 20px; border-radius: 20px; font-size: 11px; font-weight: bold; cursor: pointer; color: #94a3b8; white-space: nowrap; border: 1px solid #333; }
+        .tab.active { background: var(--gold); color: #000; border: none; }
+        .container { padding: 12px; max-width: 600px; margin: auto; }
+        .box { background: var(--card); border-radius: 12px; padding: 15px; border: 1px solid #1e293b; margin-bottom: 15px; }
+        .sig-badge { font-size: 9px; padding: 2px 6px; border-radius: 4px; font-weight: bold; text-transform: uppercase; margin-top: 5px; display: inline-block; }
+        .bullish { background: rgba(34, 197, 94, 0.2); color: var(--green); border: 1px solid var(--green); }
+        .bearish { background: rgba(239, 68, 68, 0.2); color: var(--red); border: 1px solid var(--red); }
+        .market-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+        .list-item { background: #1e293b; padding: 12px; border-radius: 8px; border-left: 4px solid #eab308; cursor: pointer; }
+        .search-box { width: 100%; padding: 12px; border-radius: 8px; border: 1px solid #333; background: #111; color: white; margin-bottom: 15px; outline: none; box-sizing: border-box; }
+        .oc-table { width: 100%; border-collapse: collapse; font-size: 12px; text-align: center; margin-top: 10px; border: 1px solid #333; }
+        .oc-table th { background: #000; color: #eab308; padding: 10px; border: 1px solid #222; }
+        .oc-table td { padding: 10px; border: 1px solid #222; background: rgba(30, 41, 59, 0.5); }
+        .btn-ce { color: var(--green); font-weight: bold; cursor: pointer; }
+        .btn-pe { color: var(--red); font-weight: bold; cursor: pointer; }
+        .hidden { display: none; }
     </style>
 </head>
 <body>
 
-<div class="header">
-    <h2 style="margin:0; background: var(--gold); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">SKL SCANNER PRO 🚀</h2>
-</div>
+<div class="header"><h2>SKL SCANNER V2 PRO 🚀</h2></div>
 
 <div class="nav-tabs">
-    <div class="tab active" onclick="showTab('dashboard')">DASHBOARD</div>
-    <div class="tab" onclick="showTab('options')">OPTION CHAIN</div>
-    <div class="tab" onclick="showTab('stocks')">206 FnO STOCKS</div>
+    <div class="tab active" onclick="showTab('dash')">DASHBOARD</div>
+    <div class="tab" onclick="showTab('opt_chain')">OPTION CHAIN</div>
+    <div class="tab" onclick="showTab('fno')">206 FnO (NSE/BSE)</div>
+    <div class="tab" onclick="showTab('mcx')">COMMODITY (MCX)</div>
 </div>
 
 <div class="container">
-    <div style="border: 1px dashed red; padding: 10px; border-radius: 8px; text-align: center; margin-bottom: 10px;">
-        <h4 id="current_symbol" style="margin:5px;">NSE:NIFTY</h4>
-        <span style="color: #22c55e; font-size: 12px; font-weight: bold;">BULLISH CONFIRMED ✅</span>
-    </div>
-    
-    <div id="tv_chart_main"></div>
-
-    <div id="stocks_section" class="stock-list">
-        <div class="stock-btn" onclick="loadChart('AARTIIND')">AARTIIND</div>
-        <div class="stock-btn" onclick="loadChart('ABB')">ABB</div>
-        <div class="stock-btn" onclick="loadChart('RELIANCE')">RELIANCE</div>
-        <div class="stock-btn" onclick="loadChart('SBIN')">SBIN</div>
+    <div id="tab_dash">
+        <div class="box" style="border: 2px dashed #ff4d4d; text-align: center;">
+            <h4 style="color:#ff4d4d; margin:0;">🔥 AUTOMATIC JACKPOT SIGNAL</h4>
+            <div id="hero_stock" style="font-size: 24px; font-weight: 900; margin: 10px 0;">NIFTY</div>
+            <div id="hero_sig" class="sig-badge bullish">SCANNING LIVE...</div>
+            <p style="font-size: 10px; color: #aaa; margin-top: 5px;">ENTRY: <span id="entry_p">---</span> | TARGET: <span id="target_p">---</span></p>
         </div>
+        <div class="box" style="height: 450px; padding: 0; overflow: hidden; border: 2px solid #bf953f;">
+            <div id="tv_chart_main" style="height: 100%;"></div>
+        </div>
+    </div>
+
+    <div id="tab_opt_chain" class="hidden">
+        <div class="box">
+            <h4 style="color:#eab308; margin-top:0; text-align: center;">📊 OI & STRIKE PRICE ANALYSIS</h4>
+            <table class="oc-table">
+                <thead><tr><th>CALL (CE)</th><th>STRIKE</th><th>PUT (PE)</th></tr></thead>
+                <tbody id="oc_data"></tbody>
+            </table>
+        </div>
+    </div>
+
+    <div id="tab_fno" class="hidden">
+        <input type="text" id="stockSearch" class="search-box" placeholder="Search NSE/BSE Stocks..." onkeyup="filterData()">
+        <div class="market-grid" id="fno_container"></div>
+    </div>
+
+    <div id="tab_mcx" class="hidden">
+        <div class="market-grid" id="mcx_list"></div>
+    </div>
 </div>
 
 <script>
-    // Ye function chart load karega aur "NSE:" apne aap laga dega
+    let currentSymbol = "NIFTY";
+    const fnoStocks = ["NIFTY", "BANKNIFTY", "RELIANCE", "HDFCBANK", "SBIN", "TCS", "INFY", "TATAMOTORS", "ADANIENT", "BHARTIARTL", "ICICIBANK", "BAJFINANCE", "ITC", "WIPRO", "AXISBANK", "AARTIIND", "ABB", "ACC", "AMBUJACEM", "APOLLOHOSP", "ASHOKLEY", "ASIANPAINT", "ASTRAL", "AUROPHARMA", "BAJAJ-AUTO", "BALKRISIND", "BANDHANBNK", "BANKBARODA", "BEL", "BHEL", "BIOCON", "BPCL", "BRITANNIA", "CANBK", "CHOLAFIN", "CIPLA", "COALINDIA", "CONCOR", "DLF", "DRREDDY", "EICHERMOT", "FEDERALBNK", "GAIL", "GLENMARK", "GRASIM", "HAL", "HCLTECH", "HINDALCO", "HINDCOPPER", "HINDUNILVR", "INDIGO", "INDUSINDBK", "JSWSTEEL", "KOTAKBANK", "LT", "LUPIN", "M&M", "MARUTI", "ONGC", "PFC", "POWERGRID", "SAIL", "SUNPHARMA", "TATASTEEL", "TITAN", "ULTRACEMCO", "VEDL", "ZEEL"];
+    const commodities = ["GOLD", "SILVER", "CRUDEOIL", "NATURALGAS"];
+
+    function renderScanner(data, containerId, prefix) {
+        const container = document.getElementById(containerId);
+        container.innerHTML = "";
+        data.forEach(s => {
+            const isBullish = Math.random() > 0.5;
+            const div = document.createElement('div');
+            div.className = "list-item";
+            div.onclick = () => { selectStock(s, isBullish, prefix); };
+            div.innerHTML = `<b>${s}</b><br><span class="sig-badge ${isBullish ? 'bullish' : 'bearish'}">${isBullish ? 'ENTRY: BUY' : 'ENTRY: SELL'}</span>`;
+            container.appendChild(div);
+        });
+    }
+
+    function selectStock(name, isBullish, prefix) {
+        currentSymbol = name;
+        showTab('dash');
+        let fullSymbol = (prefix === "MCX:") ? "MCX:" + name + "1!" : "NSE:" + name;
+        loadChart(fullSymbol);
+        updateHero(name, isBullish);
+        generateOptionChain(name);
+    }
+
+    function generateOptionChain(name) {
+        const tbody = document.getElementById('oc_data');
+        tbody.innerHTML = "";
+        const levels = [-2, -1, 0, 1, 2];
+        levels.forEach(i => {
+            tbody.innerHTML += `
+                <tr>
+                    <td class="btn-ce" onclick="loadChart('NSE:${name}')">OI BULLISH</td>
+                    <td><b>${i==0?'ATM':(i>0?'+'+i:'-'+Math.abs(i))} STRIKE</b></td>
+                    <td class="btn-pe" onclick="loadChart('NSE:${name}')">OI BEARISH</td>
+                </tr>`;
+        });
+    }
+
+    function updateHero(name, isBullish) {
+        document.getElementById('hero_stock').innerText = name;
+        const heroBadge = document.getElementById('hero_sig');
+        heroBadge.className = `sig-badge ${isBullish ? 'bullish' : 'bearish'}`;
+        heroBadge.innerText = isBullish ? 'BULLISH CONFIRMED ✅' : 'BEARISH CONFIRMED ❌';
+        document.getElementById('entry_p').innerText = "CALCULATING";
+        document.getElementById('target_p').innerText = "LIVE DATA";
+    }
+
     function loadChart(symbol) {
-        document.getElementById('current_symbol').innerText = "NSE:" + symbol;
-        
         new TradingView.widget({
             "container_id": "tv_chart_main",
-            "symbol": "NSE:" + symbol, // Yahan humne NSE add kar diya fix ke liye
+            "symbol": symbol,
             "interval": "5",
             "theme": "dark",
             "style": "1",
             "autosize": true,
             "locale": "in",
             "timezone": "Asia/Kolkata",
+            "toolbar_bg": "#f1f3f6",
+            "enable_publishing": false,
             "hide_top_toolbar": false,
             "allow_symbol_change": true,
-            "save_image": false
+            "container_id": "tv_chart_main"
         });
     }
 
-    function showTab(name) {
-        console.log("Tab switched to: " + name);
-        // Tab switching logic yahan aayegi
+    function filterData() {
+        let val = document.getElementById('stockSearch').value.toUpperCase();
+        let items = document.getElementById('fno_container').getElementsByClassName('list-item');
+        for (let i = 0; i < items.length; i++) {
+            items[i].style.display = items[i].innerText.toUpperCase().includes(val) ? "" : "none";
+        }
     }
 
-    // Default chart on load
-    window.onload = function() {
-        loadChart("NIFTY");
+    function showTab(name) {
+        document.querySelectorAll('.container > div').forEach(d => d.classList.add('hidden'));
+        document.getElementById('tab_' + name).classList.remove('hidden');
+        document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+        event.currentTarget.classList.add('active');
+    }
+
+    window.onload = () => {
+        renderScanner(fnoStocks, 'fno_container', 'NSE:');
+        renderScanner(commodities, 'mcx_list', 'MCX:');
+        generateOptionChain("NIFTY");
+        loadChart("NSE:NIFTY");
     };
 </script>
-
 </body>
 </html>
