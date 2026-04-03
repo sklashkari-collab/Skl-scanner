@@ -16,7 +16,6 @@
         .footer { position: fixed; bottom: 0; width: 100%; background: #0d1117; display: flex; justify-content: space-around; padding: 12px 0; border-top: 1px solid #1e252e; z-index: 1000; }
         .f-item { text-align: center; color: var(--dim); font-size: 10px; cursor: pointer; flex: 1; }
         .f-item.active { color: var(--gold); font-weight: bold; }
-        .status-tag { padding: 2px 6px; border-radius: 4px; font-size: 9px; font-weight: bold; }
     </style>
 </head>
 <body>
@@ -27,12 +26,11 @@
     <div class="scanner-card" style="padding: 20px; text-align: center;">
         <div style="font-size: 11px; color: var(--dim);">NIFTY 50 INDEX</div>
         <div id="live-nifty" style="font-size: 32px; font-weight: 900; color: var(--bull);">Loading...</div>
-        <div id="market-status" style="font-size: 10px; color: var(--gold);">FETCHING REAL DATA...</div>
+        <div id="market-status" style="font-size: 10px; color: var(--gold);">REAL DATA CONNECTING...</div>
     </div>
 
     <div style="padding: 5px 10px; font-size: 11px; color: var(--gold);">🚀 TOP F&O SCANNERS</div>
-    <div class="scanner-card" id="stock-list">
-        </div>
+    <div class="scanner-card" id="stock-list"></div>
 </div>
 
 <div id="options" class="page">
@@ -40,17 +38,14 @@
     <div class="scanner-card">
         <div class="scan-row" style="background: #1a1f26;"><span>CALL (CE)</span><span>STRIKE</span><span>PUT (PE)</span></div>
         <div class="scan-row"><span style="color:var(--bull);">145.20</span><span style="font-weight:bold;">22700</span><span style="color:var(--bear);">112.40</span></div>
-        <div class="scan-row"><span style="color:var(--bull);">98.50</span><span style="font-weight:bold;">22800</span><span style="color:var(--bear);">165.90</span></div>
     </div>
 </div>
 
 <div id="account" class="page">
     <div class="scanner-card" style="padding: 20px;">
-        <h3 style="margin-top:0;">Profile Details</h3>
-        <p style="color:var(--dim);">Client ID: <span style="color:white; font-weight:bold;">L121534</span></p>
-        <p style="color:var(--dim);">Status: <span style="color:var(--bull);">API CONNECTED ✅</span></p>
-        <hr border="0" style="border-top:1px solid #1e252e; margin: 15px 0;">
-        <button style="width:100%; padding:12px; background:var(--gold); border:none; border-radius:8px; font-weight:bold;">VIP SETTINGS</button>
+        <h3>Profile Details</h3>
+        <p>Client ID: <span style="color:var(--gold); font-weight:bold;">L121534</span></p>
+        <p>Status: <span style="color:var(--bull);">API CONNECTED ✅</span></p>
     </div>
 </div>
 
@@ -68,30 +63,27 @@
         element.classList.add('active');
     }
 
-    // REAL-TIME DATA FETCHING FROM YOUR market.js
     async function fetchMarketData() {
         try {
+            // આ લાઇન તમારા market.js માંથી ડેટા લાવશે
             const response = await fetch('/.netlify/functions/market');
             const data = await response.json();
             
-            // Updating UI with Real Data
             document.getElementById('live-nifty').innerText = "₹" + data.nifty;
             document.getElementById('market-status').innerText = "● " + data.status;
             
-            // Load Top Gainer
             const list = document.getElementById('stock-list');
             list.innerHTML = `
                 <div class="scan-row">
                     <div><b>${data.topGainer}</b><br><small style="color:var(--dim)">Top Gainer</small></div>
-                    <div style="text-align:right;"><b style="color:var(--bull)">₹${data.gainerPrice}</b><br><span class="status-tag" style="background:rgba(0,255,204,0.1); color:var(--bull)">BULLISH</span></div>
+                    <div style="text-align:right;"><b style="color:var(--bull)">₹${data.gainerPrice}</b></div>
                 </div>
             `;
         } catch (err) {
-            console.log("Connecting to API...");
+            console.log("Connecting...");
         }
     }
 
-    // Refresh every 2 seconds
     setInterval(fetchMarketData, 2000);
     window.onload = fetchMarketData;
 </script>
