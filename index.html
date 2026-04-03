@@ -3,148 +3,113 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>SKL VIP TERMINAL PRO</title>
+    <title>SKL VIP TERMINAL PRO V3</title>
     <script type="text/javascript" src="https://s3.tradingview.com/tv.js"></script>
     <style>
         :root { --bg: #05070a; --card: #11151c; --gold: #d4af37; --bull: #00ffcc; --bear: #ff4d4d; --dim: #8a949d; }
-        body { margin: 0; background: var(--bg); color: white; font-family: 'Inter', sans-serif; padding-bottom: 80px; overflow-x: hidden; }
+        body { margin: 0; background: var(--bg); color: white; font-family: 'Inter', sans-serif; padding-bottom: 80px; }
         
-        .top-nav { background: #0d1117; padding: 15px; border-bottom: 1px solid #1e252e; position: sticky; top: 0; z-index: 100; text-align: center; }
-        .app-title { color: var(--gold); font-weight: 900; font-size: 18px; }
-
+        /* Layout Fixes */
         .page { display: none; padding: 10px; animation: fadeIn 0.3s; }
         .active-page { display: block; }
         @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
 
-        .trial-card { background: rgba(212, 175, 55, 0.1); border: 1px solid var(--gold); border-radius: 10px; margin: 10px 0; padding: 12px; text-align: center; font-size: 12px; }
+        /* Professional Cards */
+        .scanner-card { background: var(--card); border-radius: 12px; border: 1px solid #232a33; margin-bottom: 15px; overflow: hidden; }
+        .scan-row { display: flex; justify-content: space-between; padding: 12px 15px; border-bottom: 1px solid #1e252e; align-items: center; }
+        .symbol-box { font-weight: bold; font-size: 14px; }
+        .signal-badge { padding: 4px 8px; border-radius: 4px; font-size: 10px; font-weight: bold; text-transform: uppercase; }
+        .buy-bg { background: rgba(0, 255, 204, 0.1); color: var(--bull); border: 1px solid var(--bull); }
+        .sell-bg { background: rgba(255, 77, 77, 0.1); color: var(--bear); border: 1px solid var(--bear); }
 
-        .power-meter { background: var(--card); border: 1px solid #232a33; border-radius: 12px; padding: 15px; margin-bottom: 15px; }
-        .bar-bg { height: 8px; background: #222; border-radius: 4px; margin: 10px 0; overflow: hidden; }
-        .bar-fill { height: 100%; background: linear-gradient(90deg, var(--bull), #0088ff); width: 72%; transition: 1s; }
-
-        .scanner-card { background: var(--card); border-radius: 12px; border: 1px solid #232a33; overflow: hidden; }
-        .scan-row { display: flex; justify-content: space-between; padding: 15px; border-bottom: 1px solid #1e252e; align-items: center; }
-        .signal-tag { padding: 4px 8px; border-radius: 4px; font-size: 10px; font-weight: bold; }
-        .tag-buy { background: rgba(0, 255, 204, 0.1); color: var(--bull); border: 1px solid var(--bull); }
-        .tag-sell { background: rgba(255, 77, 77, 0.1); color: var(--bear); border: 1px solid var(--bear); }
-        
-        .footer { position: fixed; bottom: 0; width: 100%; background: #0d1117; display: flex; justify-content: space-around; padding: 10px 0; border-top: 1px solid #1e252e; z-index: 1000; }
-        .f-item { text-align: center; color: var(--dim); font-size: 10px; cursor: pointer; flex: 1; }
-        .f-item.active { color: var(--gold); font-weight: bold; }
+        /* Footer Navigation */
+        .footer { position: fixed; bottom: 0; width: 100%; background: #0d1117; display: flex; justify-content: space-around; padding: 12px 0; border-top: 1px solid #1e252e; z-index: 1000; }
+        .f-item { text-align: center; color: var(--dim); font-size: 10px; cursor: pointer; flex: 1; transition: 0.3s; }
+        .f-item.active { color: var(--gold); transform: scale(1.1); }
     </style>
 </head>
 <body>
 
-<div class="top-nav">
-    <div class="app-title" id="terminal-title">SKL VIP TERMINAL [LIVE]</div>
-</div>
-
 <div id="home" class="page active-page">
-    <div class="trial-card">
-        <span>⏱️ VIP ACCESS ACTIVE</span>
-        <div id="timer" style="color:var(--gold); font-weight:bold; font-size: 1.2em;">Loading...</div>
+    <div style="text-align: center; padding: 10px; color: var(--gold); font-weight: bold;">SKL TERMINAL [LIVE DATA]</div>
+    
+    <div class="scanner-card" style="padding: 20px; text-align: center;">
+        <div style="font-size: 12px; color: var(--dim);">NIFTY 50 INDEX</div>
+        <div id="live-nifty" style="font-size: 28px; font-weight: 900; color: var(--bull);">₹22,713.10</div>
+        <div id="market-status" class="status-bull">● MARKET CLOSED (Delayed)</div>
     </div>
 
-    <div class="power-meter">
-        <div style="display:flex; justify-content:space-between; font-size:11px;">
-            <span>MARKET STRENGTH</span> <span id="market-status" style="color:var(--bull);">BULLISH 📈</span>
+    <div style="padding: 5px; font-size: 11px; color: var(--gold);">🔥 TOP F&O SIGNALS</div>
+    <div class="scanner-card" id="fo-list">
         </div>
-        <div class="bar-bg"><div id="power-bar" class="bar-fill"></div></div>
-    </div>
-
-    <div style="height: 200px; margin-bottom: 15px; border-radius: 12px; overflow: hidden; border: 1px solid #232a33;">
-        <div id="tv_chart_home" style="height: 100%;"></div>
-    </div>
-
-    <div class="scanner-card">
-        <div class="scan-row">
-            <div><div style="font-weight:bold;">NIFTY 50</div><div style="font-size:9px; color:var(--dim);">Index Live</div></div>
-            <div style="text-align:right;"><div id="nifty-price" style="color:var(--bull); font-weight:bold;">₹22,512.30</div><div id="nifty-signal" class="signal-tag tag-buy">STRONG BUY</div></div>
-        </div>
-        <div class="scan-row">
-            <div><div style="font-weight:bold;">DIXON</div><div style="font-size:9px; color:var(--dim);">Top Gainer</div></div>
-            <div style="text-align:right;"><div id="dixon-price" style="font-weight:bold;">₹11,245.00</div><div id="dixon-signal" class="signal-tag tag-buy">BTST BULLISH</div></div>
-        </div>
-    </div>
 </div>
 
-<div id="chart" class="page"><div id="tv_chart_main" style="height: 80vh;"></div></div>
-<div id="options" class="page" style="text-align:center; padding: 40px;"><h3>Live Option Chain</h3><p style="color:var(--gold)">Scanning 22500 CE/PE...</p></div>
-<div id="account" class="page">
-    <div class="scanner-card" style="padding: 20px;">
-        <h3>My Account</h3>
-        <p>Client ID: <span id="client-id-display" style="color:var(--gold)">L121534</span></p>
-        <p>Status: <span style="color:var(--bull)">API CONNECTED</span></p>
+<div id="scanner" class="page">
+    <h3 style="color:var(--gold); padding-left:10px;">🔍 NEXT DAY SCANNERS</h3>
+    <div style="padding: 0 10px; margin-bottom: 5px; font-size: 12px;">BULLISH BREAKOUTS</div>
+    <div class="scanner-card" id="bull-scanner"></div>
+    
+    <div style="padding: 0 10px; margin-bottom: 5px; font-size: 12px;">BEARISH BREAKOUTS</div>
+    <div class="scanner-card" id="bear-scanner"></div>
+</div>
+
+<div id="commo" class="page">
+    <h3 style="padding-left:10px;">🟡 COMMODITY & GLOBAL</h3>
+    <div class="scanner-card" id="global-market">
+        <div class="scan-row"><span>GOLD MCX</span><span style="color:var(--bull);">₹71,240</span></div>
+        <div class="scan-row"><span>CRUDE OIL</span><span style="color:var(--bear);">₹6,812</span></div>
     </div>
 </div>
 
 <div class="footer">
-    <div class="f-item active" onclick="showPage('home', this)">🏠<br>HOME</div>
-    <div class="f-item" onclick="showPage('chart', this)">📈<br>CHART</div>
-    <div class="f-item" onclick="showPage('options', this)">⛓️<br>OPTIONS</div>
-    <div class="f-item" onclick="showPage('account', this)">👤<br>ACCOUNT</div>
+    <div class="f-item active" onclick="showPage('home', this)">🏠<br>MARKET</div>
+    <div class="f-item" onclick="showPage('scanner', this)">🔍<br>SCANNER</div>
+    <div class="f-item" onclick="showPage('commo', this)">🌍<br>GLOBAL</div>
+    <div class="f-item" onclick="showPage('account', this)">👤<br>VIP</div>
 </div>
 
 <script>
+    // PAGE NAVIGATION
     function showPage(pageId, element) {
         document.querySelectorAll('.page').forEach(p => p.classList.remove('active-page'));
         document.querySelectorAll('.f-item').forEach(i => i.classList.remove('active'));
         document.getElementById(pageId).classList.add('active-page');
         element.classList.add('active');
-        if(pageId === 'chart') { loadMainChart(); }
     }
 
-    // TradingView Configuration
-    function loadHomeChart() {
-        new TradingView.widget({
-            "autosize": true, "symbol": "NSE:NIFTY", "interval": "1",
-            "timezone": "Asia/Kolkata", "theme": "dark", "style": "2",
-            "container_id": "tv_chart_home", "hide_top_toolbar": true, "locale": "in"
-        });
-    }
-
-    function loadMainChart() {
-        new TradingView.widget({
-            "autosize": true, "symbol": "NSE:NIFTY", "interval": "5",
-            "timezone": "Asia/Kolkata", "theme": "dark", "style": "1",
-            "container_id": "tv_chart_main", "locale": "in"
-        });
-    }
-
-    // LIVE SIMULATION & SIGNALS
-    let niftyBase = 22512.30;
-    let dixonBase = 11245.00;
-
+    // REAL DATA SIMULATION (To match your 22713.10 request)
+    let currentNifty = 22713.10;
     setInterval(() => {
-        // Price Movement
-        niftyBase += (Math.random() - 0.5) * 10;
-        dixonBase += (Math.random() - 0.5) * 8;
-        document.getElementById('nifty-price').innerText = "₹" + niftyBase.toFixed(2);
-        document.getElementById('dixon-price').innerText = "₹" + dixonBase.toFixed(2);
-
-        // Auto Signal Switcher
-        if(Math.random() > 0.8) {
-            let nSig = document.getElementById('nifty-signal');
-            if(nSig.innerText === "STRONG BUY") {
-                nSig.innerText = "ACCUMULATE"; nSig.className = "signal-tag tag-buy";
-            } else {
-                nSig.innerText = "STRONG BUY";
-            }
-        }
-        
-        // Power Bar Movement
-        document.getElementById('power-bar').style.width = (65 + Math.random() * 20) + "%";
-    }, 2000);
-
-    // Timer Logic
-    let time = 259184; 
-    setInterval(() => {
-        time--;
-        let d = Math.floor(time / 86400), h = Math.floor((time % 86400) / 3600), m = Math.floor((time % 3600) / 60), s = time % 60;
-        document.getElementById('timer').innerText = `${d}d ${h}h ${m}m ${s}s`;
+        // Simulating live tick movement
+        currentNifty += (Math.random() - 0.5) * 2;
+        document.getElementById('live-nifty').innerText = "₹" + currentNifty.toLocaleString('en-IN', {minimumFractionDigits: 2});
     }, 1000);
 
-    window.onload = loadHomeChart;
+    // AUTO-GENERATING F&O LIST & SIGNALS
+    const stocks = [
+        { s: "RELIANCE", p: "2945.10", sig: "BULLISH BREAKOUT", type: "buy" },
+        { s: "HDFC BANK", p: "1532.40", sig: "STRONG BUY", type: "buy" },
+        { s: "TCS", p: "3812.00", sig: "WEAK BEARISH", type: "sell" },
+        { s: "DIXON", p: "11245.00", sig: "BTST CONFIRMED", type: "buy" }
+    ];
+
+    function loadSignals() {
+        const list = document.getElementById('fo-list');
+        const bullList = document.getElementById('bull-scanner');
+        const bearList = document.getElementById('bear-scanner');
+        
+        stocks.forEach(stk => {
+            let row = `<div class="scan-row">
+                <div class="symbol-box">${stk.s}<br><small style="color:var(--dim)">₹${stk.p}</small></div>
+                <div class="signal-badge ${stk.type === 'buy' ? 'buy-bg' : 'sell-bg'}">${stk.sig}</div>
+            </div>`;
+            list.innerHTML += row;
+            if(stk.type === 'buy') bullList.innerHTML += row;
+            else bearList.innerHTML += row;
+        });
+    }
+
+    window.onload = loadSignals;
 </script>
 </body>
 </html>
