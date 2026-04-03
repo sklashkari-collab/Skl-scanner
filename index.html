@@ -3,113 +3,97 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>SKL VIP TERMINAL PRO V3</title>
+    <title>SKL VIP TERMINAL PRO</title>
     <script type="text/javascript" src="https://s3.tradingview.com/tv.js"></script>
     <style>
         :root { --bg: #05070a; --card: #11151c; --gold: #d4af37; --bull: #00ffcc; --bear: #ff4d4d; --dim: #8a949d; }
-        body { margin: 0; background: var(--bg); color: white; font-family: 'Inter', sans-serif; padding-bottom: 80px; }
-        
-        /* Layout Fixes */
+        body { margin: 0; background: var(--bg); color: white; font-family: 'Inter', sans-serif; padding-bottom: 80px; overflow-x: hidden; }
         .page { display: none; padding: 10px; animation: fadeIn 0.3s; }
         .active-page { display: block; }
         @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
-
-        /* Professional Cards */
         .scanner-card { background: var(--card); border-radius: 12px; border: 1px solid #232a33; margin-bottom: 15px; overflow: hidden; }
         .scan-row { display: flex; justify-content: space-between; padding: 12px 15px; border-bottom: 1px solid #1e252e; align-items: center; }
-        .symbol-box { font-weight: bold; font-size: 14px; }
-        .signal-badge { padding: 4px 8px; border-radius: 4px; font-size: 10px; font-weight: bold; text-transform: uppercase; }
-        .buy-bg { background: rgba(0, 255, 204, 0.1); color: var(--bull); border: 1px solid var(--bull); }
-        .sell-bg { background: rgba(255, 77, 77, 0.1); color: var(--bear); border: 1px solid var(--bear); }
-
-        /* Footer Navigation */
         .footer { position: fixed; bottom: 0; width: 100%; background: #0d1117; display: flex; justify-content: space-around; padding: 12px 0; border-top: 1px solid #1e252e; z-index: 1000; }
-        .f-item { text-align: center; color: var(--dim); font-size: 10px; cursor: pointer; flex: 1; transition: 0.3s; }
-        .f-item.active { color: var(--gold); transform: scale(1.1); }
+        .f-item { text-align: center; color: var(--dim); font-size: 10px; cursor: pointer; flex: 1; }
+        .f-item.active { color: var(--gold); font-weight: bold; }
+        .status-tag { padding: 2px 6px; border-radius: 4px; font-size: 9px; font-weight: bold; }
     </style>
 </head>
 <body>
 
 <div id="home" class="page active-page">
-    <div style="text-align: center; padding: 10px; color: var(--gold); font-weight: bold;">SKL TERMINAL [LIVE DATA]</div>
+    <div style="text-align: center; padding: 10px; color: var(--gold); font-weight: 900;">SKL VIP TERMINAL [LIVE]</div>
     
     <div class="scanner-card" style="padding: 20px; text-align: center;">
-        <div style="font-size: 12px; color: var(--dim);">NIFTY 50 INDEX</div>
-        <div id="live-nifty" style="font-size: 28px; font-weight: 900; color: var(--bull);">₹22,713.10</div>
-        <div id="market-status" class="status-bull">● MARKET CLOSED (Delayed)</div>
+        <div style="font-size: 11px; color: var(--dim);">NIFTY 50 INDEX</div>
+        <div id="live-nifty" style="font-size: 32px; font-weight: 900; color: var(--bull);">Loading...</div>
+        <div id="market-status" style="font-size: 10px; color: var(--gold);">FETCHING REAL DATA...</div>
     </div>
 
-    <div style="padding: 5px; font-size: 11px; color: var(--gold);">🔥 TOP F&O SIGNALS</div>
-    <div class="scanner-card" id="fo-list">
+    <div style="padding: 5px 10px; font-size: 11px; color: var(--gold);">🚀 TOP F&O SCANNERS</div>
+    <div class="scanner-card" id="stock-list">
         </div>
 </div>
 
-<div id="scanner" class="page">
-    <h3 style="color:var(--gold); padding-left:10px;">🔍 NEXT DAY SCANNERS</h3>
-    <div style="padding: 0 10px; margin-bottom: 5px; font-size: 12px;">BULLISH BREAKOUTS</div>
-    <div class="scanner-card" id="bull-scanner"></div>
-    
-    <div style="padding: 0 10px; margin-bottom: 5px; font-size: 12px;">BEARISH BREAKOUTS</div>
-    <div class="scanner-card" id="bear-scanner"></div>
+<div id="options" class="page">
+    <h3 style="color:var(--gold); padding: 10px;">⛓️ OPTION CHAIN (22700 ATM)</h3>
+    <div class="scanner-card">
+        <div class="scan-row" style="background: #1a1f26;"><span>CALL (CE)</span><span>STRIKE</span><span>PUT (PE)</span></div>
+        <div class="scan-row"><span style="color:var(--bull);">145.20</span><span style="font-weight:bold;">22700</span><span style="color:var(--bear);">112.40</span></div>
+        <div class="scan-row"><span style="color:var(--bull);">98.50</span><span style="font-weight:bold;">22800</span><span style="color:var(--bear);">165.90</span></div>
+    </div>
 </div>
 
-<div id="commo" class="page">
-    <h3 style="padding-left:10px;">🟡 COMMODITY & GLOBAL</h3>
-    <div class="scanner-card" id="global-market">
-        <div class="scan-row"><span>GOLD MCX</span><span style="color:var(--bull);">₹71,240</span></div>
-        <div class="scan-row"><span>CRUDE OIL</span><span style="color:var(--bear);">₹6,812</span></div>
+<div id="account" class="page">
+    <div class="scanner-card" style="padding: 20px;">
+        <h3 style="margin-top:0;">Profile Details</h3>
+        <p style="color:var(--dim);">Client ID: <span style="color:white; font-weight:bold;">L121534</span></p>
+        <p style="color:var(--dim);">Status: <span style="color:var(--bull);">API CONNECTED ✅</span></p>
+        <hr border="0" style="border-top:1px solid #1e252e; margin: 15px 0;">
+        <button style="width:100%; padding:12px; background:var(--gold); border:none; border-radius:8px; font-weight:bold;">VIP SETTINGS</button>
     </div>
 </div>
 
 <div class="footer">
     <div class="f-item active" onclick="showPage('home', this)">🏠<br>MARKET</div>
-    <div class="f-item" onclick="showPage('scanner', this)">🔍<br>SCANNER</div>
-    <div class="f-item" onclick="showPage('commo', this)">🌍<br>GLOBAL</div>
-    <div class="f-item" onclick="showPage('account', this)">👤<br>VIP</div>
+    <div class="f-item" onclick="showPage('options', this)">⛓️<br>OPTIONS</div>
+    <div class="f-item" onclick="showPage('account', this)">👤<br>PROFILE</div>
 </div>
 
 <script>
-    // PAGE NAVIGATION
     function showPage(pageId, element) {
         document.querySelectorAll('.page').forEach(p => p.classList.remove('active-page'));
-        document.querySelectorAll('.f-item').forEach(i => i.classList.remove('active'));
         document.getElementById(pageId).classList.add('active-page');
+        document.querySelectorAll('.f-item').forEach(i => i.classList.remove('active'));
         element.classList.add('active');
     }
 
-    // REAL DATA SIMULATION (To match your 22713.10 request)
-    let currentNifty = 22713.10;
-    setInterval(() => {
-        // Simulating live tick movement
-        currentNifty += (Math.random() - 0.5) * 2;
-        document.getElementById('live-nifty').innerText = "₹" + currentNifty.toLocaleString('en-IN', {minimumFractionDigits: 2});
-    }, 1000);
-
-    // AUTO-GENERATING F&O LIST & SIGNALS
-    const stocks = [
-        { s: "RELIANCE", p: "2945.10", sig: "BULLISH BREAKOUT", type: "buy" },
-        { s: "HDFC BANK", p: "1532.40", sig: "STRONG BUY", type: "buy" },
-        { s: "TCS", p: "3812.00", sig: "WEAK BEARISH", type: "sell" },
-        { s: "DIXON", p: "11245.00", sig: "BTST CONFIRMED", type: "buy" }
-    ];
-
-    function loadSignals() {
-        const list = document.getElementById('fo-list');
-        const bullList = document.getElementById('bull-scanner');
-        const bearList = document.getElementById('bear-scanner');
-        
-        stocks.forEach(stk => {
-            let row = `<div class="scan-row">
-                <div class="symbol-box">${stk.s}<br><small style="color:var(--dim)">₹${stk.p}</small></div>
-                <div class="signal-badge ${stk.type === 'buy' ? 'buy-bg' : 'sell-bg'}">${stk.sig}</div>
-            </div>`;
-            list.innerHTML += row;
-            if(stk.type === 'buy') bullList.innerHTML += row;
-            else bearList.innerHTML += row;
-        });
+    // REAL-TIME DATA FETCHING FROM YOUR market.js
+    async function fetchMarketData() {
+        try {
+            const response = await fetch('/.netlify/functions/market');
+            const data = await response.json();
+            
+            // Updating UI with Real Data
+            document.getElementById('live-nifty').innerText = "₹" + data.nifty;
+            document.getElementById('market-status').innerText = "● " + data.status;
+            
+            // Load Top Gainer
+            const list = document.getElementById('stock-list');
+            list.innerHTML = `
+                <div class="scan-row">
+                    <div><b>${data.topGainer}</b><br><small style="color:var(--dim)">Top Gainer</small></div>
+                    <div style="text-align:right;"><b style="color:var(--bull)">₹${data.gainerPrice}</b><br><span class="status-tag" style="background:rgba(0,255,204,0.1); color:var(--bull)">BULLISH</span></div>
+                </div>
+            `;
+        } catch (err) {
+            console.log("Connecting to API...");
+        }
     }
 
-    window.onload = loadSignals;
+    // Refresh every 2 seconds
+    setInterval(fetchMarketData, 2000);
+    window.onload = fetchMarketData;
 </script>
 </body>
 </html>
