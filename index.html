@@ -121,23 +121,23 @@
     }
 
     function loadChart(symbol) {
-        // Fix: Automatically ensure prefix is present
-        let finalSymbol = symbol.includes(":") ? symbol : "NSE:" + symbol;
-        
-        new TradingView.widget({
-            "container_id": "tv_chart_main",
-            "symbol": finalSymbol,
-            "interval": "5",
-            "theme": "dark",
-            "style": "1",
-            "autosize": true,
-            "locale": "in",
-            "timezone": "Asia/Kolkata",
-            "hide_top_toolbar": false,
-            "allow_symbol_change": true,
-            "save_image": false
-        });
-    }
+    let finalSymbol = symbol.includes(":") ? symbol : "NSE:" + symbol;
+    
+    // TradingView Widget logic ko update kiya gaya hai
+    new TradingView.widget({
+        "autosize": true,
+        "symbol": finalSymbol,
+        "interval": "5",
+        "timezone": "Asia/Kolkata",
+        "theme": "dark",
+        "style": "1",
+        "locale": "in",
+        "toolbar_bg": "#f1f3f6",
+        "enable_publishing": false,
+        "allow_symbol_change": true,
+        "container_id": "tv_chart_main"
+    });
+}
 
     function filterData() {
         let val = document.getElementById('stockSearch').value.toUpperCase();
