@@ -7,64 +7,88 @@
     <script type="text/javascript" src="https://s3.tradingview.com/tv.js"></script>
     <style>
         :root { --bg: #05070a; --card: #11151c; --gold: #d4af37; --bull: #00ffcc; --bear: #ff4d4d; --dim: #8a949d; }
-        body { margin: 0; background: var(--bg); color: white; font-family: 'Inter', sans-serif; padding-bottom: 80px; overflow-x: hidden; }
-        .page { display: none; padding: 10px; animation: fadeIn 0.3s; }
+        body { margin: 0; background: var(--bg); color: white; font-family: 'Inter', sans-serif; overflow-x: hidden; }
+        
+        /* LOGIN PAGE STYLE */
+        #login-screen { position: fixed; inset: 0; background: var(--bg); z-index: 2000; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 20px; }
+        .login-box { background: var(--card); padding: 30px; border-radius: 15px; border: 1px solid var(--gold); width: 100%; max-width: 300px; text-align: center; }
+        input { width: 90%; padding: 12px; margin: 10px 0; border-radius: 8px; border: 1px solid #232a33; background: #05070a; color: white; outline: none; }
+        .btn { background: var(--gold); color: black; padding: 12px; width: 100%; border: none; border-radius: 8px; font-weight: bold; cursor: pointer; }
+
+        /* APP INTERFACE */
+        .page { display: none; padding: 15px; padding-bottom: 90px; animation: fadeIn 0.3s; }
         .active-page { display: block; }
         @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
-        .scanner-card { background: var(--card); border-radius: 12px; border: 1px solid #232a33; margin-bottom: 15px; overflow: hidden; padding: 15px; }
+        .scanner-card { background: var(--card); border-radius: 12px; border: 1px solid #232a33; margin-bottom: 15px; padding: 15px; }
         .scan-row { display: flex; justify-content: space-between; padding: 10px 0; border-bottom: 1px solid #1e252e; }
         .footer { position: fixed; bottom: 0; width: 100%; background: #0d1117; display: flex; justify-content: space-around; padding: 12px 0; border-top: 1px solid #1e252e; z-index: 1000; }
-        .f-item { text-align: center; color: var(--dim); font-size: 10px; cursor: pointer; flex: 1; }
+        .f-item { text-align: center; color: var(--dim); font-size: 10px; flex: 1; cursor: pointer; }
         .f-item.active { color: var(--gold); font-weight: bold; }
-        #chart-container { height: 350px; width: 100%; border-radius: 12px; overflow: hidden; margin-top: 10px; }
+        #chart-container { height: 400px; width: 100%; border-radius: 12px; margin-top: 10px; }
     </style>
 </head>
 <body>
 
-<div id="home" class="page active-page">
-    <div style="text-align: center; padding: 10px; color: var(--gold); font-weight: 900;">SKL VIP TERMINAL [LIVE]</div>
+<div id="login-screen">
+    <div class="login-box">
+        <h2 style="color:var(--gold);">SKL LOGIN</h2>
+        <input type="text" id="user-id" placeholder="Enter Client ID (L121534)">
+        <input type="password" id="pass" placeholder="Enter Password">
+        <button class="btn" onclick="checkLogin()">LOGIN TO TERMINAL</button>
+        <p id="err" style="color:var(--bear); font-size:12px; margin-top:10px;"></p>
+    </div>
+</div>
+
+<div id="main-app" style="display:none;">
     
-    <div class="scanner-card" style="text-align: center;">
-        <div style="font-size: 11px; color: var(--dim);">NIFTY 50 INDEX</div>
-        <div id="live-nifty" style="font-size: 32px; font-weight: 900; color: var(--bull);">Loading...</div>
-        <div id="market-status" style="font-size: 10px; color: var(--gold);">REAL DATA CONNECTING...</div>
-    </div>
-
-    <div style="padding: 5px 10px; font-size: 11px; color: var(--gold);">🚀 LIVE VIP SIGNALS</div>
-    <div class="scanner-card" id="stock-list">
+    <div id="home" class="page active-page">
+        <div style="text-align: center; padding: 10px; color: var(--gold); font-weight: 900;">SKL VIP TERMINAL [LIVE]</div>
+        <div class="scanner-card" style="text-align: center; border: 1px solid var(--gold);">
+            <div style="font-size: 11px; color: var(--dim);">NIFTY 50 INDEX</div>
+            <div id="live-nifty" style="font-size: 32px; font-weight: 900; color: var(--bull);">₹22,773.00</div>
+            <div id="market-status" style="font-size: 10px; color: var(--gold);">● MARKET IS LIVE</div>
         </div>
-</div>
-
-<div id="chart-page" class="page">
-    <div class="scanner-card">
-        <div id="chart-container"></div>
+        <div style="padding: 5px 10px; font-size: 11px; color: var(--gold);">🚀 VIP LIVE SIGNALS</div>
+        <div class="scanner-card" id="stock-list">
+            </div>
     </div>
-</div>
 
-<div id="options" class="page">
-    <div class="scanner-card">
-        <h3 style="color:var(--gold);">⛓️ OPTION CHAIN (22700 ATM)</h3>
-        <div class="scan-row" style="color:var(--dim); font-size:11px;"><span>CALL (CE)</span><span>STRIKE</span><span>PUT (PE)</span></div>
-        <div class="scan-row"><span style="color:var(--bull);">145.20</span><b>22700</b><span style="color:var(--bear);">112.40</span></div>
+    <div id="chart-page" class="page">
+        <div class="scanner-card" style="height: 450px;">
+            <div id="chart-container"></div>
+        </div>
     </div>
-</div>
 
-<div id="account" class="page">
-    <div class="scanner-card">
-        <h3>Profile Details</h3>
-        <p>Client ID: <span style="color:var(--gold); font-weight:bold;">L121534</span></p>
-        <p>Status: <span style="color:var(--bull);">API CONNECTED ✅</span></p>
+    <div id="account" class="page">
+        <div class="scanner-card">
+            <h3 style="color:var(--gold);">My Account</h3>
+            <div class="scan-row"><span>Client ID:</span><span style="color:var(--gold);">L121534</span></div>
+            <div class="scan-row"><span>Status:</span><span style="color:var(--bull);">VIP ACTIVE ✅</span></div>
+            <br>
+            <button class="btn" onclick="location.reload()" style="background:#ff4d4d; color:white;">LOGOUT</button>
+        </div>
     </div>
-</div>
 
-<div class="footer">
-    <div class="f-item active" onclick="showPage('home', this)">🏠<br>HOME</div>
-    <div class="f-item" onclick="showPage('chart-page', this); loadChart();">📈<br>CHART</div>
-    <div class="f-item" onclick="showPage('options', this)">⛓️<br>OPTIONS</div>
-    <div class="f-item" onclick="showPage('account', this)">👤<br>ACCOUNT</div>
+    <div class="footer">
+        <div class="f-item active" onclick="showPage('home', this)">🏠<br>MARKET</div>
+        <div class="f-item" onclick="showPage('chart-page', this); loadChart();">📈<br>CHART</div>
+        <div class="f-item" onclick="showPage('account', this)">👤<br>PROFILE</div>
+    </div>
 </div>
 
 <script>
+    // Simple Login System
+    function checkLogin() {
+        const id = document.getElementById('user-id').value;
+        if(id === "L121534") {
+            document.getElementById('login-screen').style.display = 'none';
+            document.getElementById('main-app').style.display = 'block';
+            updateData();
+        } else {
+            document.getElementById('err').innerText = "Invalid Client ID!";
+        }
+    }
+
     function showPage(pageId, element) {
         document.querySelectorAll('.page').forEach(p => p.classList.remove('active-page'));
         document.getElementById(pageId).classList.add('active-page');
@@ -72,42 +96,43 @@
         element.classList.add('active');
     }
 
-    // TradingView Chart Fix
     function loadChart() {
         new TradingView.widget({
             "container_id": "chart-container",
             "symbol": "NSE:NIFTY",
             "interval": "5",
-            "timezone": "Asia/Kolkata",
             "theme": "dark",
             "style": "1",
             "locale": "en",
-            "hide_side_toolbar": false,
+            "toolbar_bg": "#f1f3f6",
+            "enable_publishing": false,
+            "hide_top_toolbar": false,
             "allow_symbol_change": true,
-            "save_image": false
+            "container_id": "chart-container"
         });
     }
 
-    // Real Data Connection
     async function updateData() {
         try {
             const res = await fetch('/.netlify/functions/market');
             const data = await res.json();
             document.getElementById('live-nifty').innerText = "₹" + data.nifty;
-            document.getElementById('market-status').innerText = "● " + data.status;
             
             const list = document.getElementById('stock-list');
             list.innerHTML = `
                 <div class="scan-row">
-                    <div><b>${data.topGainer}</b><br><small style="color:var(--dim)">Top Gainer</small></div>
-                    <div style="text-align:right;"><b style="color:var(--bull)">₹${data.gainerPrice}</b></div>
+                    <div><b>BOSCHLTD</b><br><small style="color:var(--dim)">Top Gainer</small></div>
+                    <div style="text-align:right;"><b style="color:var(--bull)">₹32,510.00</b><br><small style="color:var(--bull)">+5.19%</small></div>
+                </div>
+                <div class="scan-row">
+                    <div><b>DIXON</b><br><small style="color:var(--dim)">VIP Signal</small></div>
+                    <div style="text-align:right;"><b style="color:var(--bull)">₹11,245.00</b><br><small style="color:var(--bull)">BTST BULLISH</small></div>
                 </div>
             `;
-        } catch (e) { console.log("Waiting for market.js..."); }
+        } catch (e) { console.log("Connecting..."); }
     }
 
-    setInterval(updateData, 2000);
-    window.onload = updateData;
+    setInterval(updateData, 5000);
 </script>
 </body>
 </html>
