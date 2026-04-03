@@ -123,8 +123,15 @@
     function loadChart(symbol) {
     let finalSymbol = symbol.includes(":") ? symbol : "NSE:" + symbol;
     
-    // TradingView Widget logic ko update kiya gaya hai
-    new TradingView.widget({
+    // Purane chart ko saaf karne ke liye
+    document.getElementById('tv_chart_main').innerHTML = "";
+
+    // Naya Advanced Widget Script
+    const script = document.createElement('script');
+    script.src = 'https://s3.tradingview.com/external-embedding/embed-widget-advanced-chart.js';
+    script.type = 'text/javascript';
+    script.async = true;
+    script.innerHTML = JSON.stringify({
         "autosize": true,
         "symbol": finalSymbol,
         "interval": "5",
@@ -132,12 +139,14 @@
         "theme": "dark",
         "style": "1",
         "locale": "in",
-        "toolbar_bg": "#f1f3f6",
         "enable_publishing": false,
         "allow_symbol_change": true,
-        "container_id": "tv_chart_main"
+        "calendar": false,
+        "support_host": "https://www.tradingview.com"
     });
+    document.getElementById('tv_chart_main').appendChild(script);
 }
+
 
     function filterData() {
         let val = document.getElementById('stockSearch').value.toUpperCase();
