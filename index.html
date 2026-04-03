@@ -3,35 +3,33 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>SKL VIP TERMINAL PRO V2000</title>
+    <title>SKL VIP TERMINAL PRO</title>
     <script type="text/javascript" src="https://s3.tradingview.com/tv.js"></script>
     <style>
         :root { --bg: #05070a; --card: #11151c; --gold: #d4af37; --bull: #00ffcc; --bear: #ff4d4d; --dim: #8a949d; }
-        body { margin: 0; background: var(--bg); color: white; font-family: 'Inter', sans-serif; padding-bottom: 70px; }
+        body { margin: 0; background: var(--bg); color: white; font-family: 'Inter', sans-serif; padding-bottom: 80px; overflow-x: hidden; }
         
-        /* HEADER */
         .top-nav { background: #0d1117; padding: 15px; border-bottom: 1px solid #1e252e; position: sticky; top: 0; z-index: 100; text-align: center; }
-        .app-title { color: var(--gold); font-weight: 900; font-size: 18px; letter-spacing: 1px; transition: 0.3s; }
+        .app-title { color: var(--gold); font-weight: 900; font-size: 18px; }
 
-        /* TRIAL TIMER */
-        .trial-card { background: rgba(212, 175, 55, 0.1); border: 1px solid var(--gold); border-radius: 10px; margin: 10px; padding: 12px; text-align: center; font-size: 12px; }
+        .page { display: none; padding: 10px; animation: fadeIn 0.3s; }
+        .active-page { display: block; }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
 
-        /* MARKET POWER */
-        .power-meter { background: var(--card); border: 1px solid #232a33; border-radius: 12px; padding: 15px; margin: 12px; }
+        .trial-card { background: rgba(212, 175, 55, 0.1); border: 1px solid var(--gold); border-radius: 10px; margin: 10px 0; padding: 12px; text-align: center; font-size: 12px; }
+
+        .power-meter { background: var(--card); border: 1px solid #232a33; border-radius: 12px; padding: 15px; margin-bottom: 15px; }
         .bar-bg { height: 8px; background: #222; border-radius: 4px; margin: 10px 0; overflow: hidden; }
         .bar-fill { height: 100%; background: linear-gradient(90deg, var(--bull), #0088ff); width: 72%; }
 
-        /* SCANNER LIST */
-        .scanner-card { background: var(--card); margin: 12px; border-radius: 12px; border: 1px solid #232a33; overflow: hidden; }
+        .scanner-card { background: var(--card); border-radius: 12px; border: 1px solid #232a33; overflow: hidden; }
         .scan-row { display: flex; justify-content: space-between; padding: 15px; border-bottom: 1px solid #1e252e; align-items: center; }
-        .symbol { font-weight: bold; font-size: 14px; }
-        .signal-tag { padding: 4px 8px; border-radius: 4px; font-size: 10px; font-weight: bold; }
-        .tag-buy { background: rgba(0, 255, 204, 0.1); color: var(--bull); border: 1px solid var(--bull); }
-
-        /* BOTTOM NAV */
-        .footer { position: fixed; bottom: 0; width: 100%; background: #0d1117; display: flex; justify-content: space-around; padding: 12px 0; border-top: 1px solid #1e252e; z-index: 1000; }
-        .f-item { text-align: center; color: var(--dim); font-size: 10px; cursor: pointer; }
-        .f-item.active { color: var(--gold); }
+        
+        .footer { position: fixed; bottom: 0; width: 100%; background: #0d1117; display: flex; justify-content: space-around; padding: 10px 0; border-top: 1px solid #1e252e; z-index: 1000; }
+        .f-item { text-align: center; color: var(--dim); font-size: 10px; cursor: pointer; flex: 1; transition: 0.2s; }
+        .f-item.active { color: var(--gold); font-weight: bold; }
+        
+        .placeholder-text { text-align: center; padding: 50px; color: var(--dim); }
     </style>
 </head>
 <body>
@@ -40,82 +38,96 @@
     <div class="app-title" id="terminal-title">SKL VIP TERMINAL PRO</div>
 </div>
 
-<div class="trial-card">
-    <span>⏱️ YOUR VIP TRIAL PERIOD ENDS IN:</span>
-    <div id="timer" style="color:var(--gold); font-weight:bold; font-size:16px; margin-top:5px;">02d 23h 59m 44s</div>
-</div>
+<div id="home" class="page active-page">
+    <div class="trial-card">
+        <span>⏱️ TRIAL ENDS IN:</span>
+        <div id="timer" style="color:var(--gold); font-weight:bold;">02d 23h 59m 44s</div>
+    </div>
 
-<div id="home-page" class="active-page" style="display: block; padding-bottom: 20px;">
     <div class="power-meter">
         <div style="display:flex; justify-content:space-between; font-size:11px;">
-            <span>MARKET POWER</span> <span id="status-text" style="color:var(--dim);">CONNECTING API...</span>
+            <span>MARKET POWER</span> <span style="color:var(--bull);">STRONG BULLISH 📈</span>
         </div>
         <div class="bar-bg"><div class="bar-fill"></div></div>
-        <div style="display:flex; justify-content:space-between; font-size:10px;">
-            <span>BULL 72%</span> <span>BEAR 28%</span>
-        </div>
     </div>
 
-    <div style="height: 250px; margin: 12px; border-radius: 12px; overflow: hidden; border: 1px solid #232a33;">
-        <div id="tradingview_chart" style="height: 100%;"></div>
+    <div style="height: 200px; margin-bottom: 15px; border-radius: 12px; overflow: hidden; border: 1px solid #232a33;">
+        <div id="tv_chart_home" style="height: 100%;"></div>
     </div>
 
-    <div style="padding: 0 15px; color: var(--gold); font-size: 11px; font-weight: bold; text-transform: uppercase;">VIP Live Signals</div>
     <div class="scanner-card">
         <div class="scan-row">
-            <div><div class="symbol">NIFTY 50</div><div style="color:var(--dim); font-size:10px;">Index Hub</div></div>
-            <div style="text-align:right;"><div class="price-live" id="nifty-price">₹22,512.30</div><div class="signal-tag tag-buy">STRONG BUY ▲</div></div>
+            <div><div style="font-weight:bold;">NIFTY 50</div></div>
+            <div style="text-align:right;"><div id="nifty-price" style="color:var(--bull);">₹22,512.30</div></div>
         </div>
-        <div class="scan-row">
-            <div><div class="symbol">DIXON</div><div style="color:var(--dim); font-size:10px;">Derivatives</div></div>
-            <div style="text-align:right;"><div class="price-live" id="dixon-price">₹11,245.00</div><div class="signal-tag tag-buy">BTST BULLISH ▲</div></div>
-        </div>
+    </div>
+</div>
+
+<div id="chart" class="page">
+    <div style="height: 80vh; border-radius: 12px; overflow: hidden;">
+        <div id="tv_chart_main" style="height: 100%;"></div>
+    </div>
+</div>
+
+<div id="options" class="page">
+    <div class="placeholder-text">
+        <h3>OPTION CHAIN</h3>
+        <p>Fetching Live Greeks... (Delta, Gamma, Theta)</p>
+        <div style="color:var(--gold)">Connect Angel One to Unlock</div>
+    </div>
+</div>
+
+<div id="account" class="page">
+    <div class="scanner-card" style="padding: 20px;">
+        <h3>My Account</h3>
+        <p>Client ID: {{ANGEL_CLIENT_ID}}</p>
+        <p>Status: <span style="color:var(--bull)">CONNECTED</span></p>
+        <button style="width:100%; background:var(--gold); border:none; padding:10px; border-radius:5px;">LOGOUT</button>
     </div>
 </div>
 
 <div class="footer">
-    <div class="f-item active">🏠<br>HOME</div>
-    <div class="f-item">📈<br>CHART</div>
-    <div class="f-item">⛓️<br>OPTIONS</div>
-    <div class="f-item">👤<br>ACCOUNT</div>
+    <div class="f-item active" onclick="showPage('home', this)">🏠<br>HOME</div>
+    <div class="f-item" onclick="showPage('chart', this)">📈<br>CHART</div>
+    <div class="f-item" onclick="showPage('options', this)">⛓️<br>OPTIONS</div>
+    <div class="f-item" onclick="showPage('account', this)">👤<br>ACCOUNT</div>
 </div>
 
 <script>
-    // --- ANGEL ONE CONNECTION LOGIC ---
-    async function connectToAngel() {
-        // Ye data Netlify variables se auto-fill hoga
-        const config = {
-            apiKey: "{{ANGEL_API_KEY}}",
-            clientId: "{{ANGEL_CLIENT_ID}}",
-            totpSecret: "{{ANGEL_TOTP_SECRET}}"
-        };
+    // PAGE NAVIGATION LOGIC
+    function showPage(pageId, element) {
+        // Hide all pages
+        document.querySelectorAll('.page').forEach(p => p.classList.remove('active-page'));
+        // Deactivate all footer items
+        document.querySelectorAll('.f-item').forEach(i => i.classList.remove('active'));
+        
+        // Show selected page
+        document.getElementById(pageId).classList.add('active-page');
+        // Activate selected footer item
+        element.classList.add('active');
 
-        if (config.apiKey && config.clientId) {
-            document.getElementById('terminal-title').innerText = "SKL TERMINAL [LIVE]";
-            document.getElementById('terminal-title').style.color = "#00ffcc";
-            document.getElementById('status-text').innerText = "STRONG BULLISH 📈";
-            document.getElementById('status-text').style.color = "#00ffcc";
-            console.log("Successfully connected to Angel One API");
-        }
+        // Load Chart if Chart Page is opened
+        if(pageId === 'chart') { loadMainChart(); }
     }
 
-   new TradingView.widget({
-    "autosize": true,
-    "symbol": "NIFTY", // "NSE:NIFTY" ki jagah sirf "NIFTY" ya "CNX:NIFTY" try karein
-    "interval": "5",
-    "timezone": "Asia/Kolkata",
-    "theme": "dark",
-    "style": "1",
-    "locale": "in",
-    "toolbar_bg": "#f1f3f6",
-    "enable_publishing": false,
-    "hide_top_toolbar": true,
-    "save_image": false,
-    "container_id": "tradingview_chart"
-});
- 
+    // TRADINGVIEW FIX
+    function loadHomeChart() {
+        new TradingView.widget({
+            "autosize": true, "symbol": "FX_IDC:INRUSD*22500", "interval": "5",
+            "timezone": "Asia/Kolkata", "theme": "dark", "style": "3",
+            "container_id": "tv_chart_home", "hide_top_toolbar": true, "locale": "in"
+        });
+    }
 
-    // Trial Timer Logic
+    function loadMainChart() {
+        new TradingView.widget({
+            "autosize": true, "symbol": "NSE:NIFTY", "interval": "1",
+            "timezone": "Asia/Kolkata", "theme": "dark", "style": "1",
+            "container_id": "tv_chart_main", "locale": "in"
+        });
+    }
+
+    // TIMER & SIMULATION
     let time = 259184; 
     setInterval(() => {
         time--;
@@ -124,10 +136,13 @@
         let m = Math.floor((time % 3600) / 60);
         let s = time % 60;
         document.getElementById('timer').innerText = `${d}d ${h}h ${m}m ${s}s`;
+        
+        // Simulating Price Movement
+        let price = 22512 + (Math.random() * 5);
+        document.getElementById('nifty-price').innerText = "₹" + price.toFixed(2);
     }, 1000);
 
-    // Start Connection
-    connectToAngel();
+    window.onload = () => { loadHomeChart(); };
 </script>
 </body>
 </html>
