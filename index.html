@@ -3,116 +3,93 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>SKL TERMINAL PRO V2000</title>
+    <title>SKL VIP TERMINAL PRO V2000</title>
     <script type="text/javascript" src="https://s3.tradingview.com/tv.js"></script>
     <style>
-        :root { --bg: #0a0e14; --card: #151a21; --gold: #d4af37; --bull: #00ffcc; --bear: #ff4d4d; --dim: #8a949d; }
-        body { margin: 0; background: var(--bg); color: white; font-family: 'Inter', sans-serif; overflow-x: hidden; padding-bottom: 75px; }
+        :root { --bg: #05070a; --card: #11151c; --gold: #d4af37; --bull: #00ffcc; --bear: #ff4d4d; --dim: #8a949d; }
+        body { margin: 0; background: var(--bg); color: white; font-family: 'Inter', sans-serif; padding-bottom: 70px; }
         
-        /* HEADER & SEARCH */
-        .header-box { padding: 15px; background: #0d121a; border-bottom: 1px solid #1e252e; position: sticky; top: 0; z-index: 100; }
-        .search-bar { width: 92%; background: #1a1f26; border: 1px solid #333; padding: 12px; border-radius: 8px; color: white; margin-bottom: 10px; outline: none; font-size: 14px; }
-        
-        .market-tabs { display: flex; gap: 15px; padding: 5px 15px 10px; overflow-x: auto; scrollbar-width: none; border-bottom: 1px solid #1e252e; }
-        .tab-btn { color: var(--dim); font-weight: bold; font-size: 13px; cursor: pointer; white-space: nowrap; padding-bottom: 5px; }
-        .tab-btn.active { color: white; border-bottom: 2px solid var(--gold); }
+        /* HEADER - Image 4 style */
+        .top-nav { background: #0d1117; padding: 15px; border-bottom: 1px solid #1e252e; position: sticky; top: 0; z-index: 100; text-align: center; }
+        .app-title { color: var(--gold); font-weight: 900; font-size: 18px; letter-spacing: 1px; }
 
-        /* TRIAL STRIP */
-        .trial-strip { background: #1a1500; color: var(--gold); text-align: center; padding: 6px; font-size: 11px; border-bottom: 1px solid #332200; font-weight: bold; }
+        /* TRIAL TIMER - Image 4 style */
+        .trial-card { background: rgba(212, 175, 55, 0.1); border: 1px solid var(--gold); border-radius: 10px; margin: 10px; padding: 12px; text-align: center; font-size: 12px; }
 
-        /* PAGES */
-        .page { display: none; padding: 12px; animation: fadeIn 0.3s; }
-        .page.active { display: block; }
-        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        /* MARKET POWER - Image 3 style */
+        .power-meter { background: var(--card); border: 1px solid #232a33; border-radius: 12px; padding: 15px; margin: 12px; }
+        .bar-bg { height: 8px; background: #222; border-radius: 4px; margin: 10px 0; overflow: hidden; }
+        .bar-fill { height: 100%; background: linear-gradient(90deg, var(--bull), #0088ff); width: 72%; }
 
-        /* KOTAK STYLE WIDGETS */
-        .widget-card { background: var(--card); border-radius: 12px; padding: 15px; margin-bottom: 15px; border: 1px solid #232a33; }
-        .row { display: flex; justify-content: space-between; margin: 12px 0; align-items: center; border-bottom: 1px solid #1e252e; padding-bottom: 8px; }
-        .row:last-child { border: none; }
+        /* SCANNER LIST - Image 1 & 4 style */
+        .scanner-card { background: var(--card); margin: 12px; border-radius: 12px; border: 1px solid #232a33; overflow: hidden; }
+        .scan-row { display: flex; justify-content: space-between; padding: 15px; border-bottom: 1px solid #1e252e; align-items: center; }
+        .symbol { font-weight: bold; font-size: 14px; }
+        .signal-tag { padding: 4px 8px; border-radius: 4px; font-size: 10px; font-weight: bold; }
+        .tag-buy { background: rgba(0, 255, 204, 0.1); color: var(--bull); border: 1px solid var(--bull); }
 
-        /* OPTION CHAIN TABLE */
-        .oc-table { width: 100%; border-collapse: collapse; font-size: 11px; text-align: center; }
-        .oc-table th { color: var(--dim); padding: 10px; border-bottom: 1px solid #1e252e; }
-        .oc-table td { padding: 15px 5px; border-bottom: 1px solid #161c24; }
-        .strike { background: #000; font-weight: bold; color: var(--gold); font-size: 13px; border: 1px solid #232a33 !important; }
-
-        /* BOTTOM NAV */
-        .bottom-nav { position: fixed; bottom: 0; width: 100%; background: #0d121a; display: flex; justify-content: space-around; padding: 12px 0; border-top: 1px solid #1e252e; z-index: 1000; }
-        .nav-item { text-align: center; color: var(--dim); font-size: 10px; cursor: pointer; }
-        .nav-item.active { color: var(--gold); }
+        /* BOTTOM NAV - Image 1 style */
+        .footer { position: fixed; bottom: 0; width: 100%; background: #0d1117; display: flex; justify-content: space-around; padding: 12px 0; border-top: 1px solid #1e252e; z-index: 1000; }
+        .f-item { text-align: center; color: var(--dim); font-size: 10px; cursor: pointer; }
+        .f-item.active { color: var(--gold); }
     </style>
 </head>
 <body>
 
-<div class="trial-strip">⏳ YOUR VIP TRIAL PERIOD: <span id="timer">02d 23h 59m 44s</span></div>
+<div class="top-nav">
+    <div class="app-title">SKL VIP TERMINAL PRO</div>
+</div>
 
-<div class="header-box">
-    <div style="color:var(--gold); font-weight:900; font-size:18px; margin-bottom:12px; text-align:center;">SKL TERMINAL PRO</div>
-    <input type="text" class="search-bar" placeholder="🔍 Dixon, Nifty, Crude Oil...">
-    <div class="market-tabs">
-        <div class="tab-btn active">Equity</div>
-        <div class="tab-btn">Derivatives (FnO)</div>
-        <div class="tab-btn">Commodity</div>
+<div class="trial-card">
+    <span>⏱️ YOUR VIP TRIAL PERIOD ENDS IN:</span>
+    <div id="timer" style="color:var(--gold); font-weight:bold; font-size:16px; margin-top:5px;">02d 23h 59m 44s</div>
+</div>
+
+<div id="home-page" class="active-page" style="display: block; padding-bottom: 20px;">
+    <div class="power-meter">
+        <div style="display:flex; justify-content:space-between; font-size:11px;">
+            <span>MARKET POWER</span> <span style="color:var(--bull);">STRONG BULLISH 📈</span>
+        </div>
+        <div class="bar-bg"><div class="bar-fill"></div></div>
+        <div style="display:flex; justify-content:space-between; font-size:10px;">
+            <span>BULL 72%</span> <span>BEAR 28%</span>
+        </div>
+    </div>
+
+    <div style="height: 250px; margin: 12px; border-radius: 12px; overflow: hidden; border: 1px solid #232a33;">
+        <div id="tradingview_chart" style="height: 100%;"></div>
+    </div>
+
+    <div style="padding: 0 15px; color: var(--gold); font-size: 11px; font-weight: bold; text-transform: uppercase;">VIP Live Signals</div>
+    <div class="scanner-card">
+        <div class="scan-row">
+            <div><div class="symbol">NIFTY 50</div><div style="color:var(--dim); font-size:10px;">Index Hub</div></div>
+            <div style="text-align:right;"><div class="price-live">₹22,512.30</div><div class="signal-tag tag-buy">STRONG BUY ▲</div></div>
+        </div>
+        <div class="scan-row">
+            <div><div class="symbol">DIXON</div><div style="color:var(--dim); font-size:10px;">Derivatives</div></div>
+            <div style="text-align:right;"><div class="price-live">₹11,245.00</div><div class="signal-tag tag-buy">BTST BULLISH ▲</div></div>
+        </div>
     </div>
 </div>
 
-<div class="content">
-    <div id="home-page" class="page active">
-        <div class="widget-card" style="height: 220px; padding: 0; overflow: hidden; position: relative;">
-            <div id="main-chart" style="height: 100%;"></div>
-        </div>
-
-        <div style="color:var(--gold); font-size:11px; margin: 10px 5px; font-weight: bold;">🏆 VIP LIVE SIGNALS</div>
-        <div class="widget-card">
-            <div class="row"><span>NIFTY 50</span><span style="color:var(--bull); font-weight:bold;">STRONG BUY</span></div>
-            <div class="row"><span>DIXON</span><span style="color:var(--bull); font-weight:bold;">BTST BULLISH</span></div>
-            <div class="row"><span>CRUDE OIL</span><span style="color:var(--bull); font-weight:bold;">VIP SIGNAL</span></div>
-        </div>
-    </div>
-
-    <div id="options-page" class="page">
-        <div style="color:var(--gold); font-size:12px; font-weight:bold; margin-bottom:10px;">⛓️ ADVANCED OPTION CHAIN (NIFTY)</div>
-        <div class="widget-card" style="padding:0;">
-            <table class="oc-table">
-                <tr><th>CALL (AI)</th><th>STRIKE</th><th>PUT (AI)</th></tr>
-                <tr><td><span style="color:var(--bull);">BUY @ 145</span></td><td class="strike">22400</td><td><span style="color:var(--bear);">EXIT</span></td></tr>
-                <tr><td><span style="color:var(--bull);">STR. BUY</span></td><td class="strike">22450</td><td><span style="color:var(--bear);">SELL @ 58</span></td></tr>
-                <tr><td><span style="color:var(--bear);">WAIT</span></td><td class="strike">22500</td><td><span style="color:var(--bull);">BULLISH</span></td></tr>
-            </table>
-        </div>
-    </div>
-</div>
-
-<div class="bottom-nav">
-    <div class="nav-item active" onclick="showPage('home-page', this)"><span>🏠</span><br>HOME</div>
-    <div class="nav-item" onclick="showPage('options-page', this)"><span>⛓️</span><br>OPTIONS</div>
-    <div class="nav-item" onclick="alert('VIP Charts Loading...')"><span>📈</span><br>CHARTS</div>
-    <div class="nav-item"><span>👤</span><br>ACCOUNT</div>
+<div class="footer">
+    <div class="f-item active">🏠<br>HOME</div>
+    <div class="f-item">📈<br>CHART</div>
+    <div class="f-item">⛓️<br>OPTIONS</div>
+    <div class="f-item">👤<br>ACCOUNT</div>
 </div>
 
 <script>
-    function showPage(pageId, el) {
-        document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-        document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
-        document.getElementById(pageId).classList.add('active');
-        el.classList.add('active');
-    }
-
-    // LIVE CHART
+    // TradingView Chart
     new TradingView.widget({
-        "container_id": "main-chart",
-        "autosize": true,
-        "symbol": "NSE:NIFTY",
-        "interval": "5",
-        "theme": "dark",
-        "style": "1",
-        "locale": "en",
-        "hide_top_toolbar": true,
-        "backgroundColor": "#151a21"
+        "autosize": true, "symbol": "NSE:NIFTY", "interval": "5", "timezone": "Asia/Kolkata",
+        "theme": "dark", "style": "1", "locale": "en", "container_id": "tradingview_chart",
+        "hide_top_toolbar": true, "backgroundColor": "#11151c"
     });
 
-    // TIMER
-    let time = 259200; 
+    // Trial Timer
+    let time = 259184; 
     setInterval(() => {
         time--;
         let d = Math.floor(time / 86400);
