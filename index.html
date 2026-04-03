@@ -11,11 +11,12 @@
         .page { display: none; padding: 10px; animation: fadeIn 0.3s; }
         .active-page { display: block; }
         @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
-        .scanner-card { background: var(--card); border-radius: 12px; border: 1px solid #232a33; margin-bottom: 15px; overflow: hidden; }
-        .scan-row { display: flex; justify-content: space-between; padding: 12px 15px; border-bottom: 1px solid #1e252e; align-items: center; }
+        .scanner-card { background: var(--card); border-radius: 12px; border: 1px solid #232a33; margin-bottom: 15px; overflow: hidden; padding: 15px; }
+        .scan-row { display: flex; justify-content: space-between; padding: 10px 0; border-bottom: 1px solid #1e252e; }
         .footer { position: fixed; bottom: 0; width: 100%; background: #0d1117; display: flex; justify-content: space-around; padding: 12px 0; border-top: 1px solid #1e252e; z-index: 1000; }
         .f-item { text-align: center; color: var(--dim); font-size: 10px; cursor: pointer; flex: 1; }
         .f-item.active { color: var(--gold); font-weight: bold; }
+        #chart-container { height: 350px; width: 100%; border-radius: 12px; overflow: hidden; margin-top: 10px; }
     </style>
 </head>
 <body>
@@ -23,26 +24,33 @@
 <div id="home" class="page active-page">
     <div style="text-align: center; padding: 10px; color: var(--gold); font-weight: 900;">SKL VIP TERMINAL [LIVE]</div>
     
-    <div class="scanner-card" style="padding: 20px; text-align: center;">
+    <div class="scanner-card" style="text-align: center;">
         <div style="font-size: 11px; color: var(--dim);">NIFTY 50 INDEX</div>
         <div id="live-nifty" style="font-size: 32px; font-weight: 900; color: var(--bull);">Loading...</div>
         <div id="market-status" style="font-size: 10px; color: var(--gold);">REAL DATA CONNECTING...</div>
     </div>
 
-    <div style="padding: 5px 10px; font-size: 11px; color: var(--gold);">🚀 TOP F&O SCANNERS</div>
-    <div class="scanner-card" id="stock-list"></div>
+    <div style="padding: 5px 10px; font-size: 11px; color: var(--gold);">🚀 LIVE VIP SIGNALS</div>
+    <div class="scanner-card" id="stock-list">
+        </div>
+</div>
+
+<div id="chart-page" class="page">
+    <div class="scanner-card">
+        <div id="chart-container"></div>
+    </div>
 </div>
 
 <div id="options" class="page">
-    <h3 style="color:var(--gold); padding: 10px;">⛓️ OPTION CHAIN (22700 ATM)</h3>
     <div class="scanner-card">
-        <div class="scan-row" style="background: #1a1f26;"><span>CALL (CE)</span><span>STRIKE</span><span>PUT (PE)</span></div>
-        <div class="scan-row"><span style="color:var(--bull);">145.20</span><span style="font-weight:bold;">22700</span><span style="color:var(--bear);">112.40</span></div>
+        <h3 style="color:var(--gold);">⛓️ OPTION CHAIN (22700 ATM)</h3>
+        <div class="scan-row" style="color:var(--dim); font-size:11px;"><span>CALL (CE)</span><span>STRIKE</span><span>PUT (PE)</span></div>
+        <div class="scan-row"><span style="color:var(--bull);">145.20</span><b>22700</b><span style="color:var(--bear);">112.40</span></div>
     </div>
 </div>
 
 <div id="account" class="page">
-    <div class="scanner-card" style="padding: 20px;">
+    <div class="scanner-card">
         <h3>Profile Details</h3>
         <p>Client ID: <span style="color:var(--gold); font-weight:bold;">L121534</span></p>
         <p>Status: <span style="color:var(--bull);">API CONNECTED ✅</span></p>
@@ -50,9 +58,10 @@
 </div>
 
 <div class="footer">
-    <div class="f-item active" onclick="showPage('home', this)">🏠<br>MARKET</div>
+    <div class="f-item active" onclick="showPage('home', this)">🏠<br>HOME</div>
+    <div class="f-item" onclick="showPage('chart-page', this); loadChart();">📈<br>CHART</div>
     <div class="f-item" onclick="showPage('options', this)">⛓️<br>OPTIONS</div>
-    <div class="f-item" onclick="showPage('account', this)">👤<br>PROFILE</div>
+    <div class="f-item" onclick="showPage('account', this)">👤<br>ACCOUNT</div>
 </div>
 
 <script>
@@ -63,12 +72,27 @@
         element.classList.add('active');
     }
 
-    async function fetchMarketData() {
+    // TradingView Chart Fix
+    function loadChart() {
+        new TradingView.widget({
+            "container_id": "chart-container",
+            "symbol": "NSE:NIFTY",
+            "interval": "5",
+            "timezone": "Asia/Kolkata",
+            "theme": "dark",
+            "style": "1",
+            "locale": "en",
+            "hide_side_toolbar": false,
+            "allow_symbol_change": true,
+            "save_image": false
+        });
+    }
+
+    // Real Data Connection
+    async function updateData() {
         try {
-            // આ લાઇન તમારા market.js માંથી ડેટા લાવશે
-            const response = await fetch('/.netlify/functions/market');
-            const data = await response.json();
-            
+            const res = await fetch('/.netlify/functions/market');
+            const data = await res.json();
             document.getElementById('live-nifty').innerText = "₹" + data.nifty;
             document.getElementById('market-status').innerText = "● " + data.status;
             
@@ -79,13 +103,11 @@
                     <div style="text-align:right;"><b style="color:var(--bull)">₹${data.gainerPrice}</b></div>
                 </div>
             `;
-        } catch (err) {
-            console.log("Connecting...");
-        }
+        } catch (e) { console.log("Waiting for market.js..."); }
     }
 
-    setInterval(fetchMarketData, 2000);
-    window.onload = fetchMarketData;
+    setInterval(updateData, 2000);
+    window.onload = updateData;
 </script>
 </body>
 </html>
