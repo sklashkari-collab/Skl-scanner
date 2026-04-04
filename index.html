@@ -1,77 +1,105 @@
-
 <!DOCTYPE html>
 <html lang="gu">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>SKL VIP TERMINAL REAL</title>
+    <title>SKL VIP TERMINAL PRO</title>
     <script type="text/javascript" src="https://s3.tradingview.com/tv.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Gujarati:wght@400;700&display=swap" rel="stylesheet">
     <style>
         :root { --bg: #05070a; --card: #11151c; --gold: #d4af37; --bull: #00ffcc; --bear: #ff4d4d; --dim: #8a949d; }
-        body { margin: 0; background: var(--bg); color: white; font-family: 'Inter', sans-serif; overflow-x: hidden; }
+        body { margin: 0; background: var(--bg); color: white; font-family: 'Noto Sans Gujarati', sans-serif; overflow-x: hidden; }
         
-        /* LOGIN SCREEN */
+        /* લોગિન સ્ક્રીન */
         #login-screen { position: fixed; inset: 0; background: var(--bg); z-index: 2000; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 20px; }
         .login-box { background: var(--card); padding: 30px; border-radius: 15px; border: 1px solid var(--gold); width: 100%; max-width: 300px; text-align: center; }
         input { width: 90%; padding: 12px; margin: 10px 0; border-radius: 8px; border: 1px solid #232a33; background: #05070a; color: white; outline: none; }
         .btn { background: var(--gold); color: black; padding: 12px; width: 100%; border: none; border-radius: 8px; font-weight: bold; cursor: pointer; }
 
-        /* MAIN INTERFACE */
+        /* મેઈન ઈન્ટરફેસ */
         .page { display: none; padding: 15px; padding-bottom: 90px; animation: fadeIn 0.3s; }
         .active-page { display: block; }
         @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        
         .scanner-card { background: var(--card); border-radius: 12px; border: 1px solid #232a33; margin-bottom: 15px; padding: 15px; }
-        .scan-row { display: flex; justify-content: space-between; padding: 10px 0; border-bottom: 1px solid #1e252e; }
+        .scan-row { display: flex; justify-content: space-between; padding: 12px 0; border-bottom: 1px solid #1e252e; align-items: center; }
+        
+        /* ટેબ અને ફૂટર */
         .footer { position: fixed; bottom: 0; width: 100%; background: #0d1117; display: flex; justify-content: space-around; padding: 12px 0; border-top: 1px solid #1e252e; z-index: 1000; }
-        .f-item { text-align: center; color: var(--dim); font-size: 10px; flex: 1; cursor: pointer; }
+        .f-item { text-align: center; color: var(--dim); font-size: 11px; flex: 1; cursor: pointer; }
         .f-item.active { color: var(--gold); font-weight: bold; }
+        
+        .status-tag { font-size: 10px; padding: 2px 6px; border-radius: 4px; font-weight: bold; }
         #chart-div { height: 400px; width: 100%; border-radius: 12px; margin-top: 10px; }
+        
+        .header-title { text-align: center; color: var(--gold); font-weight: 900; letter-spacing: 1px; margin-bottom: 15px; }
+        .section-title { font-size: 13px; color: var(--gold); margin: 15px 0 10px 5px; font-weight: bold; }
     </style>
 </head>
 <body>
 
 <div id="login-screen">
     <div class="login-box">
-        <h2 style="color:var(--gold);">SKL TERMINAL LOGIN</h2>
-        <p style="font-size:12px; color:var(--dim);">Enter Client ID to Start Live Data</p>
-        <input type="text" id="client-id" placeholder="Client ID (L121534)">
-        <input type="password" id="pin" placeholder="Enter PIN">
-        <button class="btn" onclick="startApp()">LOGIN</button>
+        <h2 style="color:var(--gold);">SKL VIP લોગિન</h2>
+        <p style="font-size:12px; color:var(--dim);">લાઇવ ડેટા શરૂ કરવા માટે ક્લાયન્ટ ID નાખો</p>
+        <input type="text" id="client-id" placeholder="ક્લાયન્ટ ID (L121534)">
+        <input type="password" id="pin" placeholder="પાસવર્ડ">
+        <button class="btn" onclick="startApp()">લોગિન કરો</button>
         <p id="msg" style="color:var(--bear); font-size:12px; margin-top:10px;"></p>
     </div>
 </div>
 
 <div id="app-ui" style="display:none;">
+    
     <div id="home" class="page active-page">
-        <div style="text-align: center; padding: 10px; color: var(--gold); font-weight: 900;">SKL VIP LIVE [REAL-TIME]</div>
+        <div class="header-title">SKL VIP ટર્મિનલ [લાઇવ]</div>
         
         <div class="scanner-card" style="text-align: center; border: 1px solid var(--gold);">
             <div style="font-size: 11px; color: var(--dim);">NIFTY 50 INDEX</div>
             <div id="nifty-live" style="font-size: 32px; font-weight: 900; color: var(--bull);">₹22,713.10</div>
-            <div id="mkt-status" style="font-size: 10px; color: var(--gold);">● FETCHING DATA...</div>
+            <div id="mkt-status" style="font-size: 10px; color: var(--gold);">● ડેટા કનેક્ટ થઈ રહ્યો છે...</div>
         </div>
 
-        <div style="padding: 5px; font-size: 11px; color: var(--gold);">🔥 LIVE VIP SCANNERS</div>
-        <div class="scanner-card" id="stock-list"></div>
+        <div class="section-title">🏆 કોમોડિટી લાઇવ (Gold/Silver)</div>
+        <div class="scanner-card">
+            <div class="scan-row"><span>MCX GOLD</span><b id="gold-price" style="color:var(--bull)">₹72,450</b></div>
+            <div class="scan-row"><span>MCX SILVER</span><b id="silver-price" style="color:var(--bull)">₹83,120</b></div>
+        </div>
+
+        <div class="section-title">🚀 VIP F&O સ્કેનર્સ</div>
+        <div class="scanner-card" id="stock-list">
+            <div class="scan-row"><span>લોડિંગ...</span></div>
+        </div>
     </div>
 
     <div id="chart-page" class="page">
+        <div class="section-title">📈 એડવાન્સ ટ્રેડિંગ ચાર્ટ</div>
         <div class="scanner-card" style="height: 450px;"><div id="chart-div"></div></div>
     </div>
 
+    <div id="options-page" class="page">
+        <div class="section-title">⛓️ નિફ્ટી ઓપ્શન ચેઈન (ATM)</div>
+        <div class="scanner-card" id="option-chain-body">
+            <div class="scan-row" style="background:#1e252e; font-weight:bold;"><span>CALL (CE)</span><span>STRIKE</span><span>PUT (PE)</span></div>
+            <div id="oc-data"></div>
+        </div>
+    </div>
+
     <div id="profile" class="page">
+        <div class="section-title">👤 એકાઉન્ટ વિગતો</div>
         <div class="scanner-card">
-            <h3>VIP Account</h3>
-            <div class="scan-row"><span>User ID:</span><span style="color:var(--gold);">L121534</span></div>
-            <div class="scan-row"><span>Status:</span><span style="color:var(--bull);">CONNECTED TO ANGEL API ✅</span></div>
-            <br><button class="btn" onclick="location.reload()" style="background:#ff4d4d; color:white;">LOGOUT</button>
+            <div class="scan-row"><span>વપરાશકર્તા ID:</span><span style="color:var(--gold); font-weight:bold;">L121534</span></div>
+            <div class="scan-row"><span>એપીઆઈ સ્ટેટસ:</span><span style="color:var(--bull);">કનેક્ટ છે ✅</span></div>
+            <div class="scan-row"><span>પ્લાન:</span><span style="color:var(--gold);">VIP એક્સેસ</span></div>
+            <br><button class="btn" onclick="location.reload()" style="background:#ff4d4d; color:white;">લોગઆઉટ</button>
         </div>
     </div>
 
     <div class="footer">
-        <div class="f-item active" onclick="changeTab('home', this)">🏠<br>MARKET</div>
-        <div class="f-item" onclick="changeTab('chart-page', this); loadTV();">📈<br>CHART</div>
-        <div class="f-item" onclick="changeTab('profile', this)">👤<br>PROFILE</div>
+        <div class="f-item active" onclick="changeTab('home', this)">🏠<br>માર્કેટ</div>
+        <div class="f-item" onclick="changeTab('chart-page', this); loadTV();">📈<br>ચાર્ટ</div>
+        <div class="f-item" onclick="changeTab('options-page', this)">⛓️<br>ઓપ્શન્સ</div>
+        <div class="f-item" onclick="changeTab('profile', this)">👤<br>પ્રોફાઇલ</div>
     </div>
 </div>
 
@@ -105,15 +133,39 @@
         try {
             const res = await fetch('/.netlify/functions/market');
             const data = await res.json();
-            document.getElementById('nifty-live').innerText = "₹" + data.nifty;
-            document.getElementById('mkt-status').innerText = "● " + data.status;
             
-            document.getElementById('stock-list').innerHTML = `
-                <div class="scan-row"><b>DIXON</b><b style="color:var(--bull)">₹11,245.00</b></div>
-                <div class="scan-row"><b>BOSCHLTD</b><b style="color:var(--bull)">₹32,510.00</b></div>
-            `;
-        } catch(e) { console.log("Reconnecting..."); }
+            // ઇન્ડેક્સ અપડેટ
+            document.getElementById('nifty-live').innerText = "₹" + data.nifty;
+            document.getElementById('mkt-status').innerText = "● માર્કેટ લાઇવ છે";
+            
+            // સ્ટોક લિસ્ટ અપડેટ
+            let stockHTML = "";
+            data.fno_stocks.forEach(stock => {
+                stockHTML += `<div class="scan-row">
+                    <div><b>${stock.name}</b><br><small style="color:var(--dim)">${stock.signal}</small></div>
+                    <div style="text-align:right;"><b style="color:var(--bull)">₹${stock.price}</b><br><small style="color:var(--bull)">${stock.change}</small></div>
+                </div>`;
+            });
+            document.getElementById('stock-list').innerHTML = stockHTML;
+
+            // ઓપ્શન ચેઈન અપડેટ
+            let ocHTML = "";
+            data.option_chain.calls.forEach((call, index) => {
+                const put = data.option_chain.puts[index];
+                ocHTML += `<div class="scan-row">
+                    <span style="color:var(--bull)">${call.ltp}</span>
+                    <span style="font-weight:bold;">${call.strike}</span>
+                    <span style="color:var(--bear)">${put.ltp}</span>
+                </div>`;
+            });
+            document.getElementById('oc-data').innerHTML = ocHTML;
+
+        } catch(e) { 
+            console.log("રી-કનેક્ટિંગ..."); 
+        }
     }
+    
+    // દર 3 સેકન્ડે ડેટા રિફ્રેશ કરો
     setInterval(syncData, 3000);
 </script>
 </body>
