@@ -3,63 +3,94 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>SKL VIP TERMINAL - FULL LIST</title>
+    <title>SKL VIP REAL-TIME TERMINAL</title>
     <script type="text/javascript" src="https://s3.tradingview.com/tv.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Gujarati:wght@400;700&display=swap" rel="stylesheet">
     <style>
         :root { --bg: #05070a; --card: #11151c; --gold: #d4af37; --bull: #00ffcc; --bear: #ff4d4d; --dim: #8a949d; }
         body { margin: 0; background: var(--bg); color: white; font-family: 'Noto Sans Gujarati', sans-serif; overflow-x: hidden; }
+        
         #login-screen { position: fixed; inset: 0; background: var(--bg); z-index: 2000; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 20px; }
         .login-box { background: var(--card); padding: 30px; border-radius: 15px; border: 1px solid var(--gold); width: 100%; max-width: 300px; text-align: center; }
         input { width: 90%; padding: 12px; margin: 10px 0; border-radius: 8px; border: 1px solid #232a33; background: #05070a; color: white; outline: none; }
         .btn { background: var(--gold); color: black; padding: 12px; width: 100%; border: none; border-radius: 8px; font-weight: bold; cursor: pointer; }
-        .page { display: none; padding: 15px; padding-bottom: 100px; height: 100vh; overflow-y: auto; }
+
+        .page { display: none; padding: 10px; padding-bottom: 80px; }
         .active-page { display: block; }
-        .scanner-card { background: var(--card); border-radius: 12px; border: 1px solid #232a33; margin-bottom: 15px; padding: 15px; }
-        .scan-row { display: flex; justify-content: space-between; padding: 12px 0; border-bottom: 1px solid #1e252e; align-items: center; }
+        
+        .scanner-card { background: var(--card); border-radius: 12px; border: 1px solid #232a33; margin-bottom: 10px; overflow: hidden; }
         .footer { position: fixed; bottom: 0; width: 100%; background: #0d1117; display: flex; justify-content: space-around; padding: 12px 0; border-top: 1px solid #1e252e; z-index: 1000; }
-        .f-item { text-align: center; color: var(--dim); font-size: 11px; flex: 1; cursor: pointer; }
+        .f-item { text-align: center; color: var(--dim); font-size: 11px; flex: 1; }
         .f-item.active { color: var(--gold); font-weight: bold; }
-        .section-title { font-size: 14px; color: var(--gold); margin: 20px 0 10px 5px; font-weight: bold; border-left: 3px solid var(--gold); padding-left: 10px; }
-        .price-up { color: var(--bull); font-weight: bold; }
-        .price-down { color: var(--bear); font-weight: bold; }
+        
+        .section-title { font-size: 14px; color: var(--gold); margin: 15px 5px 5px; font-weight: bold; }
     </style>
 </head>
 <body>
 
 <div id="login-screen">
     <div class="login-box">
-        <h2 style="color:var(--gold);">SKL VIP LOGIN</h2>
+        <h2 style="color:var(--gold);">SKL VIP LIVE</h2>
         <input type="text" id="client-id" placeholder="ID: L121534">
-        <input type="password" id="pin" placeholder="Password: 1234">
-        <button class="btn" onclick="startApp()">લોગિન કરો</button>
+        <input type="password" id="pin" placeholder="Pass: 1234">
+        <button class="btn" onclick="startApp()">લાઇવ માર્કેટ શરૂ કરો</button>
         <p id="msg" style="color:var(--bear); font-size:12px; margin-top:10px;"></p>
     </div>
 </div>
 
 <div id="app-ui" style="display:none;">
+    
     <div id="home" class="page active-page">
-        <div style="text-align:center; color:var(--gold); font-weight:bold; padding: 10px;">SKL VIP માર્કેટ લિસ્ટ</div>
+        <div class="section-title">📊 ઇન્ડેક્સ લાઇવ (Nifty/BankNifty)</div>
+        <div class="scanner-card" style="height:160px;">
+            <div class="tradingview-widget-container">
+                <div class="tradingview-widget-container__widget"></div>
+                <script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-tickers.js" async>
+                {
+                "symbols": [
+                    {"proName": "NSE:NIFTY", "title": "NIFTY 50"},
+                    {"proName": "NSE:BANKNIFTY", "title": "BANK NIFTY"},
+                    {"proName": "MCX:GOLD1!", "title": "GOLD"},
+                    {"proName": "MCX:SILVER1!", "title": "SILVER"}
+                ],
+                "colorTheme": "dark", "isTransparent": true, "locale": "en"
+                }
+                </script>
+            </div>
+        </div>
 
-        <div class="section-title">📊 મુખ્ય ઇન્ડેક્સ (Indices)</div>
-        <div class="scanner-card" id="index-list"></div>
-
-        <div class="section-title">🏆 કોમોડિટી (Commodity)</div>
-        <div class="scanner-card" id="commodity-list"></div>
-
-        <div class="section-title">🚀 F&O બુલિશ સ્ટોક્સ</div>
-        <div class="scanner-card" id="fno-list"></div>
+        <div class="section-title">🚀 F&O સ્ટોક્સ લાઇવ સ્કેનર</div>
+        <div class="scanner-card" style="height:400px;">
+            <div class="tradingview-widget-container">
+                <div class="tradingview-widget-container__widget"></div>
+                <script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-market-overview.js" async>
+                {
+                "colorTheme": "dark", "dateRange": "12M", "showChart": false, "locale": "en",
+                "width": "100%", "height": "100%", "largeChartUrl": "", "isTransparent": true,
+                "tabs": [
+                    {
+                    "title": "F&O Stocks",
+                    "symbols": [
+                        {"s": "NSE:DIXON"}, {"s": "NSE:BOSCHLTD"}, {"s": "NSE:RELIANCE"},
+                        {"s": "NSE:HDFCBANK"}, {"s": "NSE:TCS"}, {"s": "NSE:INFY"}
+                    ]
+                    }
+                ]
+                }
+                </script>
+            </div>
+        </div>
     </div>
 
     <div id="chart-page" class="page">
-        <div class="section-title">📈 લાઇવ ચાર્ટ</div>
+        <div class="section-title">📈 એડવાન્સ ચાર્ટ</div>
         <div id="chart-div" style="height: 500px;"></div>
     </div>
 
     <div class="footer">
         <div class="f-item active" onclick="changeTab('home', this)">🏠<br>માર્કેટ</div>
         <div class="f-item" onclick="changeTab('chart-page', this); loadTV();">📈<br>ચાર્ટ</div>
-        <div class="f-item" onclick="location.reload()">🚪<br>એક્ઝિટ</div>
+        <div class="f-item" onclick="location.reload()">🔄<br>રીફ્રેશ</div>
     </div>
 </div>
 
@@ -70,9 +101,8 @@
         if(id === "L121534" && pass === "1234") {
             document.getElementById('login-screen').style.display = 'none';
             document.getElementById('app-ui').style.display = 'block';
-            renderAllData();
         } else {
-            document.getElementById('msg').innerText = "ID: L121534 અને Pass: 1234 નાખો!";
+            document.getElementById('msg').innerText = "ભૂલ: ID: L121534 અને Pass: 1234 નાખો!";
         }
     }
 
@@ -89,52 +119,6 @@
             "theme": "dark", "style": "1", "width": "100%", "height": "100%"
         });
     }
-
-    function renderAllData() {
-        // 1. ઇન્ડેક્સ ડેટા
-        const indices = [
-            { n: "NIFTY 50", p: "22,713.10", c: "+0.85%" },
-            { n: "BANK NIFTY", p: "48,560.40", c: "+1.20%" },
-            { n: "FIN NIFTY", p: "21,430.15", c: "+0.65%" }
-        ];
-        let idxHTML = "";
-        indices.forEach(i => {
-            idxHTML += `<div class="scan-row"><span><b>${i.n}</b></span><span class="price-up">₹${i.p} (${i.c})</span></div>`;
-        });
-        document.getElementById('index-list').innerHTML = idxHTML;
-
-        // 2. કોમોડિટી ડેટા
-        const commodities = [
-            { n: "GOLD (MCX)", p: "72,450", s: "બુલિશ" },
-            { n: "SILVER (MCX)", p: "83,120", s: "બુલિશ" },
-            { n: "CRUDE OIL", p: "6,840", s: "સાઇડવેઝ" },
-            { n: "NATURAL GAS", p: "165.40", s: "બેરીશ" }
-        ];
-        let comHTML = "";
-        commodities.forEach(c => {
-            comHTML += `<div class="scan-row"><span><b>${c.n}</b><br><small>${c.s}</small></span><b class="price-up">₹${c.p}</b></div>`;
-        });
-        document.getElementById('commodity-list').innerHTML = comHTML;
-
-        // 3. F&O સ્ટોક્સ ડેટા (Full List)
-        const stocks = [
-            { n: "DIXON", p: "11,245", sig: "STRONG BUY" },
-            { n: "BOSCHLTD", p: "32,510", sig: "BULLISH" },
-            { n: "COFORGE", p: "5,120", sig: "BTST" },
-            { n: "RELIANCE", p: "2,950", sig: "HOLD" },
-            { n: "HDFCBANK", p: "1,530", sig: "BUY" },
-            { n: "ICICIBANK", p: "1,110", sig: "BULLISH" },
-            { n: "TCS", p: "3,890", sig: "STRONG BUY" },
-            { n: "INFY", p: "1,450", sig: "ACCUMULATE" }
-        ];
-        let stkHTML = "";
-        stocks.forEach(s => {
-            stkHTML += `<div class="scan-row"><span><b>${s.n}</b><br><small>${s.sig}</small></span><b class="price-up">₹${s.p}</b></div>`;
-        });
-        document.getElementById('fno-list').innerHTML = stkHTML;
-    }
-
-    setInterval(renderAllData, 3000);
 </script>
 </body>
 </html>
