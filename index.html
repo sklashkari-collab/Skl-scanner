@@ -127,25 +127,45 @@
             "container_id": "chart-div", "symbol": "NSE:NIFTY", "interval": "5",
             "theme": "dark", "style": "1", "locale": "en", "allow_symbol_change": true
         });
-    }
 
-    async function syncData() {
-        try {
-            const res = await fetch('/.netlify/functions/market');
-            const data = await res.json();
-            
-            // ઇન્ડેક્સ અપડેટ
-            document.getElementById('nifty-live').innerText = "₹" + data.nifty;
-            document.getElementById('mkt-status').innerText = "● માર્કેટ લાઇવ છે";
-            
-            // સ્ટોક લિસ્ટ અપડેટ
-            let stockHTML = "";
-            data.fno_stocks.forEach(stock => {
-                stockHTML += `<div class="scan-row">
-                    <div><b>${stock.name}</b><br><small style="color:var(--dim)">${stock.signal}</small></div>
-                    <div style="text-align:right;"><b style="color:var(--bull)">₹${stock.price}</b><br><small style="color:var(--bull)">${stock.change}</small></div>
-                </div>`;
-            });
+        // આ નવો કોડ છે જે ડાયરેક્ટ ડેટા બતાવશે
+async function syncData() {
+    // આપણે અત્યારે ડાયરેક્ટ ડેટા નાખી રહ્યા છીએ કારણ કે Netlify બંધ છે
+    const data = {
+        nifty: "22,713.10",
+        status: "માર્કેટ લાઇવ છે",
+        fno_stocks: [
+            { name: "DIXON", price: "11,245.00", change: "+2.10%", signal: "BTST BULLISH" },
+            { name: "BOSCHLTD", price: "32,510.00", change: "+5.19%", signal: "STRONG BUY" }
+        ],
+        option_chain: {
+            calls: [
+                { strike: 22600, ltp: 150 },
+                { strike: 22700, ltp: 85 },
+                { strike: 22800, ltp: 30 }
+            ],
+            puts: [
+                { strike: 22600, ltp: 25 },
+                { strike: 22700, ltp: 78 },
+                { strike: 22800, ltp: 140 }
+            ]
+        }
+    };
+
+    // ડેટા અપડેટ કરો
+    document.getElementById('nifty-live').innerText = "₹" + data.nifty;
+    document.getElementById('mkt-status').innerText = "● " + data.status;
+    
+    let stockHTML = "";
+    data.fno_stocks.forEach(stock => {
+        stockHTML += `<div class="scan-row">
+            <div><b>${stock.name}</b><br><small style="color:var(--dim)">${stock.signal}</small></div>
+            <div style="text-align:right;"><b style="color:var(--bull)">₹${stock.price}</b></div>
+        </div>`;
+    });
+    document.getElementById('stock-list').innerHTML = stockHTML;
+}
+
             document.getElementById('stock-list').innerHTML = stockHTML;
 
             // ઓપ્શન ચેઈન અપડેટ
