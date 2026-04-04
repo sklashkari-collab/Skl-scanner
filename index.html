@@ -11,11 +11,10 @@
         body { margin: 0; background: var(--bg); color: white; font-family: 'Noto Sans Gujarati', sans-serif; overflow-x: hidden; }
         #login-screen { position: fixed; inset: 0; background: var(--bg); z-index: 2000; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 20px; }
         .login-box { background: var(--card); padding: 30px; border-radius: 15px; border: 1px solid var(--gold); width: 100%; max-width: 300px; text-align: center; }
-        input { width: 90%; padding: 12px; margin: 10px 0; border-radius: 8px; border: 1px solid #232a33; background: #05070a; color: white; outline: none; }
-        .btn { background: var(--gold); color: black; padding: 12px; width: 100%; border: none; border-radius: 8px; font-weight: bold; cursor: pointer; }
-        .page { display: none; padding: 15px; padding-bottom: 90px; animation: fadeIn 0.3s; }
+        input { width: 90%; padding: 12px; margin: 10px 0; border-radius: 8px; border: 1px solid #232a33; background: #05070a; color: white; outline: none; font-size: 16px; }
+        .btn { background: var(--gold); color: black; padding: 12px; width: 100%; border: none; border-radius: 8px; font-weight: bold; cursor: pointer; margin-top: 10px; }
+        .page { display: none; padding: 15px; padding-bottom: 90px; }
         .active-page { display: block; }
-        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
         .scanner-card { background: var(--card); border-radius: 12px; border: 1px solid #232a33; margin-bottom: 15px; padding: 15px; }
         .scan-row { display: flex; justify-content: space-between; padding: 12px 0; border-bottom: 1px solid #1e252e; align-items: center; }
         .footer { position: fixed; bottom: 0; width: 100%; background: #0d1117; display: flex; justify-content: space-around; padding: 12px 0; border-top: 1px solid #1e252e; z-index: 1000; }
@@ -31,6 +30,7 @@
 <div id="login-screen">
     <div class="login-box">
         <h2 style="color:var(--gold);">SKL VIP લોગિન</h2>
+        <p style="font-size:12px; color:var(--dim);">લાઇવ ડેટા માટે ક્લાયન્ટ ID નાખો</p>
         <input type="text" id="client-id" placeholder="ક્લાયન્ટ ID (L121534)">
         <input type="password" id="pin" placeholder="પાસવર્ડ">
         <button class="btn" onclick="startApp()">લોગિન કરો</button>
@@ -52,7 +52,7 @@
             <div class="scan-row"><span>MCX SILVER</span><b style="color:var(--bull)">₹83,120</b></div>
         </div>
         <div class="section-title">🚀 VIP F&O સ્કેનર્સ</div>
-        <div class="scanner-card" id="stock-list"></div>
+        <div id="stock-list" class="scanner-card"></div>
     </div>
 
     <div id="chart-page" class="page">
@@ -72,7 +72,7 @@
         <div class="section-title">👤 પ્રોફાઇલ</div>
         <div class="scanner-card">
             <div class="scan-row"><span>ID:</span><span style="color:var(--gold);">L121534</span></div>
-            <div class="scan-row"><span>Status:</span><span style="color:var(--bull);">CONNECTED ✅</span></div>
+            <div class="scan-row"><span>સ્ટેટસ:</span><span style="color:var(--bull);">API CONNECTED ✅</span></div>
             <button class="btn" onclick="location.reload()" style="margin-top:20px; background:var(--bear); color:white;">LOGOUT</button>
         </div>
     </div>
@@ -88,12 +88,13 @@
 <script>
     function startApp() {
         const id = document.getElementById('client-id').value;
+        console.log("Login Attempt with ID:", id); // Browser console માટે
         if(id === "L121534") {
             document.getElementById('login-screen').style.display = 'none';
             document.getElementById('app-ui').style.display = 'block';
             syncData();
         } else {
-            document.getElementById('msg').innerText = "ભૂલ: સાચો ID નાખો!";
+            document.getElementById('msg').innerText = "ભૂલ: સાચો ID (L121534) નાખો!";
         }
     }
 
@@ -115,7 +116,7 @@
         const data = {
             nifty: "22,713.10",
             stocks: [
-                { name: "DIXON", price: "11,245", signal: "BULLISH" },
+                { name: "DIXON", price: "11,245", signal: "BTST BULLISH" },
                 { name: "BOSCHLTD", price: "32,510", signal: "STRONG BUY" }
             ],
             oc: [
@@ -129,7 +130,7 @@
         
         let sHTML = "";
         data.stocks.forEach(s => {
-            sHTML += `<div class="scan-row"><span><b>${s.name}</b><br><small>${s.signal}</small></span><b style="color:var(--bull)">₹${s.price}</b></div>`;
+            sHTML += `<div class="scan-row"><span><b>${s.name}</b><br><small style="color:var(--dim)">${s.signal}</small></span><b style="color:var(--bull)">₹${s.price}</b></div>`;
         });
         document.getElementById('stock-list').innerHTML = sHTML;
 
@@ -139,6 +140,8 @@
         });
         document.getElementById('oc-data').innerHTML = oHTML;
     }
+    
+    // દર 3 સેકન્ડે ડેટા રિફ્રેશ કરો
     setInterval(syncData, 3000);
 </script>
 </body>
